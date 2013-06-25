@@ -175,7 +175,7 @@ public class Loader
 		Iterator iterator = tweetsByUserName.entrySet().iterator();
 		
 		while(iterator.hasNext())
-		{
+		{//don't know if we still want tweets that users have tweeted less than two anymore. probably not.
 			Map.Entry pairs = (Map.Entry)iterator.next();
 			if(((ArrayList<Tweet>) pairs.getValue()).size() < 2)
 			{
