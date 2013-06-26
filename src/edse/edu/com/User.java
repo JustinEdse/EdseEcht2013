@@ -65,6 +65,8 @@ public class User
 	{
 		Map<String, List<Tweet>> tweetsByUserName = Loader.totalByUserName(tweets);
 		Map<String, List<Tweet>> filteredOut = Loader.filterTweet(tweetsByUserName);
+		
+		
 		List<User> users = new ArrayList<User>();
 		
 		Iterator<Entry<String, List<Tweet>>> iterator = filteredOut.entrySet().iterator();
@@ -76,8 +78,13 @@ public class User
 			List<Tweet> userTweets = pairs.getValue();
 			User user = new User(userName, userTweets);
 			users.add(user);
+			
+			
 		}
-		
+		/////////////////////////////////////////////////////////////////////////
+		//GIVE THIS LIST OF TWEETS TO THE FILEINDEX CLASS TO CREATE DOCS AND PUT INTO LUCENE INDEX.
+		//SLIGHT REDESIGN MAY NEED TO BE DONE IN FILEINDEXER....
+		FileIndexer.TweetsToIndex(users);
 		return users;
 	}
 }

@@ -6,7 +6,7 @@ import java.sql.Timestamp;
 public class Tweet
 {
 	
-   BigInteger tweetID;
+    long tweetID;
    Timestamp timeID; //sent according to GMT!
 	double tweetLatit;
 	double tweetLongit;
@@ -16,7 +16,7 @@ public class Tweet
 	String senderName;
 	String sendSource;//What device was the tweet sent from?
 	int repToUserID;
-	BigInteger repToTweetID;
+	long repToTweetID;
 	String placeID; //Contains more info about where the tweet came from.
 	String tweetText;
 	
@@ -32,12 +32,12 @@ public class Tweet
 		
 	}
 	
-	   public BigInteger getTweetID()
+	   public Long getTweetID()
 	    {
 			return tweetID;
 		}
 	   
-	   public void setTweetID(BigInteger tweetID)
+	   public void setTweetID(Long tweetID)
 	   {
 		   this.tweetID = tweetID;
 	   }
@@ -132,12 +132,12 @@ public class Tweet
 		   this.repToUserID = repToUserID;
 	   }
 	   
-	   public BigInteger getRepToTweetID()
+	   public long getRepToTweetID()
 	    {
 			return repToTweetID;
 		}
 	   
-	   public void setRepToTweetID(BigInteger repToTweetID)
+	   public void setRepToTweetID(long repToTweetID)
 	   {
 		   this.repToTweetID = repToTweetID;
 	   }
