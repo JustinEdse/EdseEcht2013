@@ -86,7 +86,8 @@ public class Loader
 		final CellProcessor[] processors = new CellProcessor[]
 				{
 				    null, //big int tweet id
-				    new ParseDate("yyyy-MM-dd HH:mm:ss"), //time stamp from tweet
+				    new ParseDate("yyyy-MM-dd HH:mm:ss"), //time stamp from tweet is in
+				    //GMT and contains no time zone.
 				    new ParseDouble(),//tweet latitude
 				    new ParseDouble(),//tweet longitude
 				    new ParseDouble(),//google x coordinate
