@@ -1,12 +1,17 @@
 package edse.edu.com;
 
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.lucene.document.Document;
+import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.search.Hit;
+import org.apache.lucene.search.Hits;
 import org.supercsv.cellprocessor.ParseDate;
 import org.supercsv.cellprocessor.ParseDouble;
 import org.supercsv.cellprocessor.ParseInt;
@@ -19,11 +24,12 @@ import org.supercsv.prefs.CsvPreference;
 
 public class Loader
 {
-
+	
 	/**
 	 * @param args
+	 * @throws ParseException 
 	 */
-	public static void main(String[] args)
+	public static void main(String[] args) throws ParseException
 	{
 		//Loading a certain number of tweets from one day or several days
 		//related to a natural disaster, the Boston bombings, or something
@@ -74,6 +80,7 @@ public class Loader
 		}
 
 		 */
+		ConductQuery();
 		
 		
 	}
@@ -186,6 +193,59 @@ public class Loader
 		
 		return tweetsByUserName;
 	}
+	
+	public static void ConductQuery() throws ParseException
+	{
+		
+		// Putting together a string to search through the multiple documents.
+		
+	
+		
+		try
+		{	
+			String queryString = "(marathon and boston) AND prayer";
+			String otherQuery = "tweet_text: (+boston + finish line";
+			String escapeQuery = "tweet_text: that\\s";
+			BasicSearch newSearch = new BasicSearch();
+			
+			Hits returnedHits = newSearch.performSearch(queryString);
+			
+			@SuppressWarnings("unchecked")
+			Iterator<Hit> iteratorHits = returnedHits.iterator();
+			
+			System.out.println("The following number of results were found:\n " + 
+					returnedHits.length());
+			
+			// while loop to iterate through the hits.
+			
+			while(iteratorHits.hasNext())
+			{
+				Hit hit = iteratorHits.next();
+				
+				Document returnedDoc = hit.getDocument();
+				System.out.println(returnedDoc.get("time") + " " + 
+						returnedDoc.get("tweet_text") +
+						" (" + hit.getScore() + ")");
+				
+				// From here the score gives the user a good indication
+				// of the quality of each document that was associated
+				// with each hit.
+				
+			}
+			
+			
+			
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
+	}
+	
 
 
 }
