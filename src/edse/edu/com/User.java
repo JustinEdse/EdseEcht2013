@@ -29,7 +29,7 @@ public class User
 	{
 		return this.tweets;
 	}
-	/*
+	
 	public boolean hasMove()
 	{
 		Tweet tweet = this.tweets.get(0);
@@ -38,15 +38,15 @@ public class User
 		for(Tweet secondTweet: this.tweets.subList(1, this.tweets.size())){
 			double dist = greatCircle(tweet.tweetLatit, tweet.tweetLongit, secondTweet.tweetLatit, secondTweet.tweetLongit);
 
-			if(dist > 1){
+			if(dist > .70){
 				moved = true;
 				break;	
 			}	
-			//tweet = secondTweet;
+			tweet = secondTweet;
 		}
 		return moved;
 	}
-*/
+
 	public static double greatCircle(double lat1, double lng1, double lat2, double lng2)
 	{
 		// aka checking distance between two points
