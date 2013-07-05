@@ -27,9 +27,9 @@ public class Loader
 	
 	/**
 	 * @param args
-	 * @throws ParseException 
+	 * @throws Exception 
 	 */
-	public static void main(String[] args) throws ParseException
+	public static void main(String[] args) throws Exception
 	{
 		//Loading a certain number of tweets from one day or several days
 		//related to a natural disaster, the Boston bombings, or something
@@ -47,24 +47,31 @@ public class Loader
 		//and non facts that came out of the attacks. Just kicking different ideas
 		//around.
 		List<Tweet> tweets = null;
-		try
-		{
-			//If doing anlaysis on the boston marathon and aftermath, the file could be from April 15th or over the course
-			//of a couple days close to that.
-			tweets = Loader.loadTweetsFromFile("./src/all.csv");
-		}
-		catch (Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		List<User> users = User.tweetsToUsers(tweets);
-		//List<User> movedUsers = new ArrayList<User>();
 		
+		
+		
+			//If doing anlaysis on the boston marathon and aftermath, the file could be from April 15th or over the course
+			//of a couple days close to that.//load one day for now.
+			tweets = Loader.loadTweetsFromFile("./src/all.csv");
+			List<User> users = User.tweetsToUsers(tweets);
+			List<User> movedUsers = new ArrayList<User>();
+			
+			for(User user: users)
+			{
+				if(user.hasMove())
+				{
+					movedUsers.add(user);
+				}
+			}
+		
+		
+	
 		//for each loop to check and filter
 		//users who have tweeted a certain number of times.
 		System.out.println(users.size());
+		System.out.println(movedUsers.size());
 		
+		//gson on hacoci's starts here!
 		/*
 		 try {
 			File file = new File("./src/movedUsers.json");
@@ -121,7 +128,7 @@ public class Loader
 		//latitude and longitude settings for the given site
 		double centerLat = 42.3497630; //latitude and longitude close to Boston marathon
 		double centerLon = -71.0785170;
-		double radius = 300;
+		double radius = 25; //double check unit!!!!!!!!!!!!!!!!!!!!!!!!!!
 		
 		try
 		{
@@ -193,6 +200,8 @@ public class Loader
 		
 		return tweetsByUserName;
 	}
+	
+	//public static String DirectionMoved(User) 
 	
 	public static void ConductQuery() throws ParseException
 	{

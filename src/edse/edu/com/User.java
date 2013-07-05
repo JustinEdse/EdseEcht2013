@@ -38,7 +38,7 @@ public class User
 		for(Tweet secondTweet: this.tweets.subList(1, this.tweets.size())){
 			double dist = greatCircle(tweet.tweetLatit, tweet.tweetLongit, secondTweet.tweetLatit, secondTweet.tweetLongit);
 
-			if(dist > .70){
+			if(dist > .125){
 				moved = true;
 				break;	
 			}	
@@ -85,6 +85,7 @@ public class User
 		//GIVE THIS LIST OF TWEETS TO THE FILEINDEX CLASS TO CREATE DOCS AND PUT INTO LUCENE INDEX.
 		//SLIGHT REDESIGN MAY NEED TO BE DONE IN FILEINDEXER....
 		FileIndexer.TweetsToIndex(users);
+		
 		return users;
 	}
 }
