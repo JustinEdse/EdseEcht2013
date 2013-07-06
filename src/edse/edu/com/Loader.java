@@ -2,6 +2,7 @@ package edse.edu.com;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -49,9 +50,10 @@ public class Loader
 		List<Tweet> tweets = null;
 		
 		
-		
+		    
+		    
 			//If doing anlaysis on the boston marathon and aftermath, the file could be from April 15th or over the course
-			//of a couple days close to that.//load one day for now.
+			//of a couple days close to that.//load one day for now.//filter .csv file to 18:49 GMT.
 			tweets = Loader.loadTweetsFromFile("./src/all.csv");
 			List<User> users = User.tweetsToUsers(tweets);
 			List<User> movedUsers = new ArrayList<User>();
@@ -139,10 +141,20 @@ public class Loader
 					null, null, "repToUserID", null, null, null};
 			final CellProcessor[] processors = getProcessors();
 			
+			// In the .csv file the time is organized like this, 2013-04-15 hh:mm:ss in GMT.
+			// Let's filter from 18:45 to 22:15 GMT
+			// This is from 2:45PM to 6:15PM EST on April 15th.
+			// The variables below are constructed with the java.sql Timestamp class and
+			// each tweet that comes along is check to see if it is within the acceptable range
+			// of being after 2:45 but before 6:15. 
+			
+			Timestamp startTime = Timestamp.valueOf("2013-04-15 18:45:00");
+			Timestamp endTime = Timestamp.valueOf("2013-04-15 22:30:00");
+			
 			Tweet tweet = beanReader.read(Tweet.class, header, processors);
 			while(tweet != null)
 			{
-				if(tweet.getLat() < 400 && User.greatCircle(centerLat, centerLon, tweet.getLat(), tweet.getTweetLongit()) < radius)
+				if(tweet.getLat() < 400 && User.greatCircle(centerLat, centerLon, tweet.getLat(), tweet.getTweetLongit()) < radius && (tweet.getTimeID().after(startTime) && tweet.getTimeID().before(endTime)))
 				{
 					tweets.add(tweet);
 				}
@@ -211,7 +223,7 @@ public class Loader
 	
 		
 		try
-		{	
+		{	//18:49  GMT, 2:49PM April 15th.
 			String queryString = "(marathon and boston) AND prayer";
 			String otherQuery = "tweet_text: (+boston + finish line";
 			String escapeQuery = "tweet_text: that\\s";
