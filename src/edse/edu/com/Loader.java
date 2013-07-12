@@ -25,7 +25,9 @@ import org.supercsv.prefs.CsvPreference;
 
 public class Loader
 {
-	
+	static double centerLat = 0.0; //latitude and longitude close to Boston marathon bomb, only on static instance of locations.
+	static double centerLon = 0.0;
+	static double radius = 0.0; 
 	/**
 	 * @param args
 	 * @throws Exception 
@@ -65,6 +67,9 @@ public class Loader
 					movedUsers.add(user);
 				}
 			}
+			
+		//Calling distance and direction method to operate on each users tweets and distance from bomb location x.
+		Loader.DistanceDirectMoved(movedUsers);
 		
 		
 	
@@ -89,7 +94,7 @@ public class Loader
 		}
 
 		 */
-		ConductQuery();
+		Loader.ConductQuery();
 		
 		
 	}
@@ -128,9 +133,9 @@ public class Loader
 		List<Tweet> tweets = new ArrayList<Tweet>();
 		
 		//latitude and longitude settings for the given site
-		double centerLat = 42.3497630; //latitude and longitude close to Boston marathon
-		double centerLon = -71.0785170;
-		double radius = 25; //double check unit!!!!!!!!!!!!!!!!!!!!!!!!!!
+		centerLat = 42.3497630; //latitude and longitude close to Boston marathon
+		centerLon = -71.0785170;
+		radius = 25; //double check unit!!!!!!!!!!!!!!!!!!!!!!!!!!
 		
 		try
 		{
@@ -213,7 +218,32 @@ public class Loader
 		return tweetsByUserName;
 	}
 	
-	//public static String DirectionMoved(User) 
+	public static void DistanceDirectMoved(List<User> users)
+	{
+		//as usual User type means: username, <list> user tweets.
+		// for each twitter user in the array list
+		// for each tweet after their second one, how far are they from bomb location x? output to console.
+		List<Tweet> tweetsPerUser = new ArrayList<Tweet>();
+		Tweet lastTweetLocation;
+		Tweet NextTweetLocation;
+		int differenceInLocation = 0;
+		int i = 0;
+		
+		Map<Double, Double> userGroupedLatLon = new HashMap();
+		for(User username : users)
+		{
+			System.out.println("User = " + username.toString() + "\n");
+			
+			tweetsPerUser = username.getTweets();
+			
+			for(Tweet tweet : tweetsPerUser)
+			{
+				
+			}
+			
+		}
+		
+	}
 	
 	public static void ConductQuery() throws ParseException
 	{
