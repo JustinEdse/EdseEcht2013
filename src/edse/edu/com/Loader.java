@@ -239,8 +239,7 @@ public class Loader
 	
 		int i = 0;
 		
-		//Map<Double, Double> userGroupedLatLon = new HashMap();
-		Map<String, List<Integer>> userMovement = new HashMap();
+		
 		for(User username : users)
 		{
 			System.out.println("User = " + username.toString() + "\n");
@@ -258,7 +257,7 @@ public class Loader
 			// the person is moving away, if it is less then they are moving towards
 			// the epicenter. This is a repeating action and each movement should be
 			// taken care of in this loop, checking each user's list of tweets and 
-			// outputting them into the console window.
+			// outputting them into the console window. 
 			
 			//twitter user's initial distance in miles away from the epicenter.
 			if(i == 0)
@@ -284,7 +283,9 @@ public class Loader
 				//lastTweet.set
 				
 				// Also thinking about assigning 1's to all users moving away and 0's to the ones moving inward.
-				if(i != 0 && otherDistance != 0)
+				// A new user property called movement was added to User.java to do this.
+				if(i != 0 && otherDistance != 0 || !(otherDistance == distance)) //trying to take care of someone moving around the radius and not really
+					//moving outward for inward.
 				{
 					if(distance > otherDistance)
 					{

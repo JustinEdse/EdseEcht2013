@@ -12,14 +12,23 @@ public class User
 {
 	private String username;
 	private List<Tweet> tweets;
+	private int movement = 0;
 	
 	public User(String username, List<Tweet> tweets)
 	{
 		this.username = username;
 		this.tweets = tweets;
-		
+		this.movement = 0;
 	}
 	
+	public int getMovement()
+	{
+		return this.movement;
+	}
+	public void setMovement(int towardsOrAway)
+	{
+		this.movement = towardsOrAway;
+	}
 	public String getUserName()
 	{
 		return this.username;
