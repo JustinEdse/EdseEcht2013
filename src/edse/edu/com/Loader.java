@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.math.*;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryParser.ParseException;
@@ -69,7 +70,7 @@ public class Loader
 			}
 			
 		//Calling distance and direction method to operate on each users tweets and distance from bomb location x.
-		Loader.DistanceDirectMoved(movedUsers);
+		Loader.DirectMoved(movedUsers);
 		
 		
 	
@@ -218,32 +219,90 @@ public class Loader
 		return tweetsByUserName;
 	}
 	
-	public static void DistanceDirectMoved(List<User> users)
+	public static double distMiles(double lastLat, double nextLat, double lastLon, double nextLon)
+	{
+		double moveLatit = nextLat - lastLat;
+		double moveLon = nextLon - lastLon;
+		//http://andrew.hedges.name/experiments/haversine/
+		double a =  Math.pow((Math.sin(moveLatit/2)), 2) + Math.cos(lastLat) * Math.cos(nextLat) * Math.pow((Math.sin(moveLon/2)),2);
+	    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+	    double distMiles = 3961 * c; //3961 miles for radius of the Earth.
+	    
+		return distMiles;
+	}
+	public static void DirectMoved(List<User> users)
 	{
 		//as usual User type means: username, <list> user tweets.
 		// for each twitter user in the array list
 		// for each tweet after their second one, how far are they from bomb location x? output to console.
 		List<Tweet> tweetsPerUser = new ArrayList<Tweet>();
-		Tweet lastTweetLocation;
-		Tweet NextTweetLocation;
-		int differenceInLocation = 0;
+	
 		int i = 0;
 		
-		Map<Double, Double> userGroupedLatLon = new HashMap();
+		//Map<Double, Double> userGroupedLatLon = new HashMap();
+		Map<String, List<Integer>> userMovement = new HashMap();
 		for(User username : users)
 		{
 			System.out.println("User = " + username.toString() + "\n");
 			
 			tweetsPerUser = username.getTweets();
+			Tweet lastTweet = tweetsPerUser.get(i);
+			Tweet nextTweet = tweetsPerUser.get(i+1);
+			double distance = 0;
+			double otherDistance = 0;
 			
-			for(Tweet tweet : tweetsPerUser)
+			
+			// get initial tweet distance from the epicenter first.
+			// After this look at their next tweet and check if it adds to the miles
+			// they were away from the epicenter initially. If it is then that means
+			// the person is moving away, if it is less then they are moving towards
+			// the epicenter. This is a repeating action and each movement should be
+			// taken care of in this loop, checking each user's list of tweets and 
+			// outputting them into the console window.
+			
+			//twitter user's initial distance in miles away from the epicenter.
+			if(i == 0)
 			{
+				//This initial measurement of closeness to the epicenter is needed because
+				// if you just had 2 tweets and one distance figure you couldn't tell if that
+				// existing distance figure was being added to or subtracted from (ie. going towards a point).
 				
+			    lastTweet.setTweetLatit(-71.0785170);
+			    lastTweet.setTweetLongit(42.3497630);
+				
+			    otherDistance = Loader.distMiles(lastTweet.getLat(), nextTweet.getLat(), lastTweet.getTweetLongit(), nextTweet.getTweetLongit());
 			}
+				
+				otherDistance = distance; // assign distance to otherDistance so we can compare later.
+				
+				distance += Loader.distMiles(lastTweet.getLat(), nextTweet.getLat(), lastTweet.getTweetLongit(), nextTweet.getTweetLongit());
+			    
+			
+			    
+				//double moveLongit = nextTweet.getTweetLongit() - lastTweet.getTweetLongit();
+				//double moveLatit = nextTweet.getLat() - lastTweet.getLat();
+				//lastTweet.set
+				
+				// Also thinking about assigning 1's to all users moving away and 0's to the ones moving inward.
+				if(i != 0 && otherDistance != 0)
+				{
+					if(distance > otherDistance)
+					{
+						//this means we moved positive miles
+						System.out.println("With this tweet the user moved" + (distance - otherDistance) + " positive miles from before");
+					}
+					else if(distance < otherDistance)
+					{
+						System.out.println("With this tweet the user moved" + (distance - otherDistance) + " negative miles from before");
+					}
+				}
+			
+			  i++;
+			
 			
 		}
-		
 	}
+	
 	
 	public static void ConductQuery() throws ParseException
 	{
