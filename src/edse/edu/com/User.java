@@ -45,7 +45,7 @@ public class User
 		boolean moved = false;
 
 		for(Tweet secondTweet: this.tweets.subList(1, this.tweets.size())){
-			double dist = greatCircle(tweet.tweetLatit, tweet.tweetLongit, secondTweet.tweetLatit, secondTweet.tweetLongit);
+			double dist = greatCircle(tweet.lat, tweet.lon, secondTweet.lat, secondTweet.lon);
 
 			if(dist > .125){
 				moved = true;
@@ -93,7 +93,7 @@ public class User
 		/////////////////////////////////////////////////////////////////////////
 		//GIVE THIS LIST OF TWEETS TO THE FILEINDEX CLASS TO CREATE DOCS AND PUT INTO LUCENE INDEX.
 		//SLIGHT REDESIGN MAY NEED TO BE DONE IN FILEINDEXER....
-		FileIndexer.TweetsToIndex(users);
+		//FileIndexer.TweetsToIndex(users);
 		
 		return users;
 	}

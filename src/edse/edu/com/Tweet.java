@@ -2,164 +2,165 @@ package edse.edu.com;
 
 import java.math.BigInteger;
 import java.sql.Timestamp;
+import java.util.Date;
 
 public class Tweet
 {
 	
-    long tweetID;
-   Timestamp timeID; //sent according to GMT!
-	double tweetLatit;
-	double tweetLongit;
-	double googyMeas;//Google coordinates for mapping
-	double googxMeas;
-	int senderID;
-	String senderName;
-	String sendSource;//What device was the tweet sent from?
-	int repToUserID;
-	long repToTweetID;
-	String placeID; //Contains more info about where the tweet came from.
-	String tweetText;
+    String tweet_id;
+    Date time; //sent according to GMT!
+	double lat;
+	double lon;
+	double goog_y;//Google coordinates for mapping
+	double goog_x;
+	String sender_id;
+	String sender_name;
+	String source;//What device was the tweet sent from?
+	String reply_to_user_id;
+	String reply_to_tweet_id;
+	String place_id; //Contains more info about where the tweet came from.
+	String tweet_text;
 	
 	
 
 	public String toString()
 	{
-		return String.format("<Tweet ID: " + tweetID + " time ID: " + timeID.toString() + " Latitude: " +
-				tweetLatit + "Longitude: " + tweetLongit + " Google X Measure: " + googxMeas +
-				" Google Y Meas: " + googxMeas + " Sender ID: " + senderID + " Sender Name " + senderName +
-				" Sender Source Device " + sendSource + " Reply to user id " + repToUserID +
-				" Reply to tweet ID: " + repToTweetID + " Place ID: " + placeID + " Tweet Text: " + tweetText);
+		return String.format("<Tweet ID: " + tweet_id + " time ID: " + time.toString() + " Latitude: " +
+				lat + "Longitude: " + lon + " Google X Measure: " + goog_x +
+				" Google Y Meas: " + goog_y + " Sender ID: " + sender_id + " Sender Name " + sender_name +
+				" Sender Source Device " + source + " Reply to user id " + reply_to_user_id +
+				" Reply to tweet ID: " + reply_to_tweet_id + " Place ID: " + place_id + " Tweet Text: " + tweet_text);
 		
 	}
 	
-	   public Long getTweetID()
+	   public String getTweet_id()
 	    {
-			return tweetID;
+			return tweet_id;
 		}
 	   
-	   public void setTweetID(Long tweetID)
+	   public void setTweet_id(String tweet_id)
 	   {
-		   this.tweetID = tweetID;
+		   this.tweet_id = tweet_id;
 	   }
 	   
-	   public Timestamp getTimeID()
+	   public Date getTime()
 	    {
-			return timeID;
+			return time;
 		}
 	   
-	   public void setTimeID(Timestamp timeID)
+	   public void setTime(Date time)
 	   {
-		   this.timeID = timeID;
+		   this.time = time;
 	   }
 	   
 	   public double getLat()
 	    {
-			return tweetLatit;
+			return lat;
 		}
 	   
-	   public void setTweetLatit(double tweetLatit)
+	   public void setLat(double lat)
 	   {
-		   this.tweetLatit = tweetLatit;
+		   this.lat= lat;
 	   }
 	   
-	   public double getTweetLongit()
+	   public double getLon()
 	    {
-			return tweetLongit;
+			return lon;
 		}
 	   
-	   public void setTweetLongit(double tweetLongit)
+	   public void setLon(double lon)
 	   {
-		   this.tweetLongit = tweetLongit;
+		   this.lon = lon;
 	   }
 	   
-	   public double getGoogleX()
+	   public double getGoog_x()
 	    {
-			return googxMeas;
+			return goog_x;
 		}
 	   
-	   public void setGoogXMeas(double googxMeas)
+	   public void setGoog_x(double goog_x)
 	   {
-		   this.googxMeas = googxMeas;
+		   this.goog_x = goog_x;
 	   }
 	   
-	   public double getGoogleYMeas()
+	   public double getGoog_y()
 	    {
-			return googyMeas;
+			return goog_y;
 		}
 	   
-	   public void setGoogleYMeas(double googyMeas)
+	   public void setGoog_y(double goog_y)
 	   {
-		   this.googyMeas = googyMeas;
+		   this.goog_y = goog_y;
 	   }
 	   
-	   public int getSenderID()
+	   public String getSender_id()
 	    {
-			return senderID;
+			return sender_id;
 		}
 	   
-	   public void setSenderID(int senderID)
+	   public void setSender_id(String sender_id)
 	   {
-		    this.senderID = senderID;
+		    this.sender_id = sender_id;
 	   }
 	   
-	   public String getSenderName()
+	   public String getSender_name()
 	    {
-			return senderName;
+			return sender_name;
 		}
 	   
-	   public void setSenderName(String senderName)
+	   public void setSender_name(String sender_name)
 	   {
-		   this.senderName = senderName;
+		   this.sender_name = sender_name;
 	   }
 	   
-	   public String getSenderSource()
+	   public String getSource()
 	    {
-			return sendSource;
+			return source;
 		}
 	   
-	   public void setSenderSource(String senderSource)
+	   public void setSource(String source)
 	   {
-		   this.sendSource = senderSource;
+		   this.source = source;
 	   }
 	   
-	   public int getRepToUserID()
+	   public String getReply_to_user_id()
 	    {
-			return repToUserID;
+			return reply_to_user_id;
 		}
 	   
-	   public void setRepToUserID(int repToUserID)
+	   public void setReply_to_user_id(String reply_to_user_id)
 	   {
-		   this.repToUserID = repToUserID;
+		   this.reply_to_user_id = reply_to_user_id;
 	   }
 	   
-	   public long getRepToTweetID()
+	   public String getReply_to_tweet_id()
 	    {
-			return repToTweetID;
+			return reply_to_tweet_id;
 		}
 	   
-	   public void setRepToTweetID(long repToTweetID)
+	   public void setReply_to_tweet_id(String reply_to_tweet_id)
 	   {
-		   this.repToTweetID = repToTweetID;
+		   this.reply_to_tweet_id = reply_to_tweet_id;
 	   }
 	   
-	   public String getPlaceID()
+	   public String getPlace_id()
 	    {
-			return placeID;
+			return place_id;
 		}
 	   
-	   public void setPlaceID(String placeID)
+	   public void setPlace_id(String place_id)
 	   {
-		   this.placeID = placeID;
+		   this.place_id = place_id;
 	   }
 	   
-	   public String getTweetText()
+	   public String getTweet_text()
 	   {
-		   return tweetText;
+		   return tweet_text;
 	   }
 	   
-	   public void setTweetText(String tweetText)
+	   public void setTweet_text(String tweet_text)
 	   {
-		   this.tweetText = tweetText;
+		   this.tweet_text = tweet_text;
 	   }
 }
 

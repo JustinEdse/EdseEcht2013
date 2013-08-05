@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.List;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.document.DateField;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.DoubleField;
 import org.apache.lucene.document.Field;
@@ -56,19 +57,19 @@ public class FileIndexer
 			tweetDoc = new Document();
 			//ALL TIMES ARE IN GMT!
 			
-			tweetDoc.add(new LongField("tweet_id", t.getTweetID(), Field.Store.YES));
-			tweetDoc.add(new Field("time", t.getTimeID().toString(), Field.Store.YES, Field.Index.TOKENIZED));
+			tweetDoc.add(new Field("tweet_id", t.getTweet_id(), Field.Store.YES, Field.Index.TOKENIZED));
+			tweetDoc.add(new Field("time", t.getTime().toString(), Field.Store.YES, Field.Index.TOKENIZED));
 			tweetDoc.add(new DoubleField("lat", t.getLat(), Field.Store.YES));
-			tweetDoc.add(new DoubleField("long", t.getTweetLongit(), Field.Store.YES));
-			tweetDoc.add(new DoubleField("goog_x", t.getGoogleX(), Field.Store.YES));
-			tweetDoc.add(new DoubleField("goog_y", t.getGoogleX(), Field.Store.YES));
-			tweetDoc.add(new IntField("sender_id", t.getSenderID(), Field.Store.YES));
-			tweetDoc.add(new Field("sender_name", t.getSenderName(), Field.Store.YES, Field.Index.TOKENIZED));
-			tweetDoc.add(new Field("source", t.getSenderSource(), Field.Store.YES, Field.Index.TOKENIZED));
-			tweetDoc.add(new IntField("reply_to_user_id", t.getRepToUserID(), Field.Store.YES));
-			tweetDoc.add(new LongField("reply_to_tweet_id", t.getRepToTweetID(), Field.Store.YES));
-			tweetDoc.add(new Field("place_id", t.getPlaceID(), Field.Store.YES, Field.Index.TOKENIZED));
-			tweetDoc.add(new Field("tweet_text", t.getTweetText(), Field.Store.YES, Field.Index.TOKENIZED));
+			tweetDoc.add(new DoubleField("long", t.getLon(), Field.Store.YES));
+			tweetDoc.add(new DoubleField("goog_x", t.getGoog_x(), Field.Store.YES));
+			tweetDoc.add(new DoubleField("goog_y", t.getGoog_y(), Field.Store.YES));
+			tweetDoc.add(new Field("sender_id", t.getSender_id(), Field.Store.YES, Field.Index.TOKENIZED));
+			tweetDoc.add(new Field("sender_name", t.getSender_name(), Field.Store.YES, Field.Index.TOKENIZED));
+			tweetDoc.add(new Field("source", t.getSource(), Field.Store.YES, Field.Index.TOKENIZED));
+			tweetDoc.add(new Field("reply_to_user_id", t.getReply_to_user_id(), Field.Store.YES, Field.Index.TOKENIZED));
+			tweetDoc.add(new Field("reply_to_tweet_id", t.getReply_to_tweet_id(), Field.Store.YES, Field.Index.TOKENIZED));
+			tweetDoc.add(new Field("place_id", t.getPlace_id(), Field.Store.YES, Field.Index.TOKENIZED));
+			tweetDoc.add(new Field("tweet_text", t.getTweet_text(), Field.Store.YES, Field.Index.TOKENIZED));
 			}
 			try
 			{

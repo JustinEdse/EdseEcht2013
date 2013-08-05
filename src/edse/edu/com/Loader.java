@@ -3,7 +3,9 @@ package edse.edu.com;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -17,6 +19,7 @@ import org.apache.lucene.search.Hits;
 import org.supercsv.cellprocessor.ParseDate;
 import org.supercsv.cellprocessor.ParseDouble;
 import org.supercsv.cellprocessor.ParseInt;
+import org.supercsv.cellprocessor.constraint.NotNull;
 import org.supercsv.cellprocessor.ift.CellProcessor;
 import org.supercsv.exception.SuperCsvConstraintViolationException;
 import org.supercsv.io.CsvBeanReader;
@@ -57,7 +60,7 @@ public class Loader
 		    
 			//If doing anlaysis on the boston marathon and aftermath, the file could be from April 15th or over the course
 			//of a couple days close to that.//load one day for now.//filter .csv file to 18:49 GMT.
-			tweets = Loader.loadTweetsFromFile("./src/all.csv");
+			tweets = Loader.loadTweetsFromFile("C://fin4.csv");
 			List<User> users = User.tweetsToUsers(tweets);
 			List<User> movedUsers = new ArrayList<User>();
 			
@@ -70,7 +73,7 @@ public class Loader
 			}
 			
 		//Calling distance and direction method to operate on each users tweets and distance from bomb location x.
-		Loader.DirectMoved(movedUsers);
+		//Loader.DirectMoved(movedUsers);
 		
 		
 	
@@ -95,7 +98,7 @@ public class Loader
 		}
 
 		 */
-		Loader.ConductQuery();
+		//Loader.ConductQuery();
 		
 		
 	}
@@ -114,10 +117,10 @@ public class Loader
 				    new ParseDouble(),//tweet longitude
 				    new ParseDouble(),//google x coordinate
 				    new ParseDouble(),//google y coordinate
-				    new ParseInt(), //senderID
-				    null, //string senderName
+				    null, //senderID
+				    new NotNull(), //string senderName
 				    null, //string sendSource what device
-				    new ParseInt(), //reply to user id
+				    null, //reply to user id
 				    null, //reply to tweet id
 				    null,//string place id
 				    null,//tweet text
@@ -143,8 +146,8 @@ public class Loader
 			beanReader = new CsvBeanReader(new FileReader(path), CsvPreference.STANDARD_PREFERENCE);
 			
 			//header elements at the top of the csv file. Those need to be accounted for.
-			final String[] header = {null, "timeID", "tweetLatit", "tweetLongit", "googxMeas", "googyMeas", "senderID", 
-					null, null, "repToUserID", null, null, null};
+			final String[] header = {null, "time", "lat", "lon", "goog_x", "goog_y", null, 
+					"sender_name", null, null, null, null, null};
 			final CellProcessor[] processors = getProcessors();
 			
 			// In the .csv file the time is organized like this, 2013-04-15 hh:mm:ss in GMT.
@@ -154,13 +157,19 @@ public class Loader
 			// each tweet that comes along is check to see if it is within the acceptable range
 			// of being after 2:45 but before 6:15. 
 			
-			Timestamp startTime = Timestamp.valueOf("2013-04-15 18:45:00");
-			Timestamp endTime = Timestamp.valueOf("2013-04-15 22:30:00");
+		
+			
+			
+			
+			Date startTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2013-04-15 18:00:00");
+			Date endTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2013-04-15 23:59:00");
+			
+			
 			
 			Tweet tweet = beanReader.read(Tweet.class, header, processors);
 			while(tweet != null)
 			{
-				if(tweet.getLat() < 400 && User.greatCircle(centerLat, centerLon, tweet.getLat(), tweet.getTweetLongit()) < radius && (tweet.getTimeID().after(startTime) && tweet.getTimeID().before(endTime)))
+				if(tweet.getLat() < 400 && User.greatCircle(centerLat, centerLon, tweet.getLat(), tweet.getLon()) < radius && (tweet.getTime().after(startTime) && tweet.getTime().before(endTime)))
 				{
 					tweets.add(tweet);
 				}
@@ -190,12 +199,12 @@ public class Loader
 		
 		for(Tweet tweet: tweets)
 		{
-			if(!map.containsKey(tweet.senderName))
+			if(!map.containsKey(tweet.sender_name))
 			{
-				map.put(tweet.senderName, new ArrayList<Tweet>());
+				map.put(tweet.sender_name, new ArrayList<Tweet>());
 			}
 			
-			List<Tweet> userTweets = map.get(tweet.senderName);
+			List<Tweet> userTweets = map.get(tweet.sender_name);
 			userTweets.add(tweet);
 		}
 		
@@ -218,7 +227,7 @@ public class Loader
 		
 		return tweetsByUserName;
 	}
-	
+	/*
 	public static double distMiles(double lastLat, double nextLat, double lastLon, double nextLon)
 	{
 		double moveLatit = nextLat - lastLat;
@@ -356,7 +365,7 @@ public class Loader
 		
 		
 	}
-	
+	*/
 
 
 }
