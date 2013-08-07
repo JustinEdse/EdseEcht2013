@@ -1,15 +1,21 @@
 package edse.edu.com;
 
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
 import java.math.*;
 
 import org.apache.lucene.document.Document;
@@ -73,7 +79,7 @@ public class Loader
 			}
 			
 		//Calling distance and direction method to operate on each users tweets and distance from bomb location x.
-		//Loader.DirectMoved(movedUsers);
+		Loader.DirectMoved(movedUsers);
 		
 		
 	
@@ -227,7 +233,7 @@ public class Loader
 		
 		return tweetsByUserName;
 	}
-	/*
+	
 	public static double distMiles(double lastLat, double nextLat, double lastLon, double nextLon)
 	{
 		double moveLatit = nextLat - lastLat;
@@ -245,74 +251,96 @@ public class Loader
 		// for each twitter user in the array list
 		// for each tweet after their second one, how far are they from bomb location x? output to console.
 		List<Tweet> tweetsPerUser = new ArrayList<Tweet>();
-	
-		int i = 0;
+		List<Double> keepTrackOfDistanceMeasure = new ArrayList<Double>();
+		List<Tweet> holdLastTweet = new LinkedList<Tweet>();
+		Queue<Tweet> distances = new LinkedList<Tweet>();
+		double overallDistance = 0;
 		
-		
+	    
+	   
+	    
 		for(User username : users)
 		{
-			System.out.println("User = " + username.toString() + "\n");
 			
 			tweetsPerUser = username.getTweets();
-			Tweet lastTweet = tweetsPerUser.get(i);
-			Tweet nextTweet = tweetsPerUser.get(i+1);
-			double distance = 0;
-			double otherDistance = 0;
 			
-			
-			// get initial tweet distance from the epicenter first.
-			// After this look at their next tweet and check if it adds to the miles
-			// they were away from the epicenter initially. If it is then that means
-			// the person is moving away, if it is less then they are moving towards
-			// the epicenter. This is a repeating action and each movement should be
-			// taken care of in this loop, checking each user's list of tweets and 
-			// outputting them into the console window. 
-			
-			//twitter user's initial distance in miles away from the epicenter.
-			if(i == 0)
+			for(Tweet tweet : tweetsPerUser)
 			{
-				//This initial measurement of closeness to the epicenter is needed because
-				// if you just had 2 tweets and one distance figure you couldn't tell if that
-				// existing distance figure was being added to or subtracted from (ie. going towards a point).
-				
-			    lastTweet.setTweetLatit(-71.0785170);
-			    lastTweet.setTweetLongit(42.3497630);
-				
-			    otherDistance = Loader.distMiles(lastTweet.getLat(), nextTweet.getLat(), lastTweet.getTweetLongit(), nextTweet.getTweetLongit());
+				//distances queue
+				distances.add(tweet);
 			}
+			  //the set
+				Tweet initialEpicenter = new Tweet();
+				initialEpicenter.setLat(42.3497630);
+				initialEpicenter.setLon(-71.0785170);
+				holdLastTweet.add(initialEpicenter);
+			//while(distances.size() > 0)
+			//{
+				//Tweet tweet = distances.remove();
 				
-				otherDistance = distance; // assign distance to otherDistance so we can compare later.
+				//System.out.println(tweet);
+			//}
+			//Now use the measurement in the set and the measurements
+			//in the queue, store the figure in the keepTrackOfDistances
+			//array list and then compare the next measure figure with
+			//the old one.
+		     
+			while(distances.size() > 0)
+			{
+				Tweet tweetToCompare = distances.remove();
 				
-				distance += Loader.distMiles(lastTweet.getLat(), nextTweet.getLat(), lastTweet.getTweetLongit(), nextTweet.getTweetLongit());
-			    
-			
-			    
-				//double moveLongit = nextTweet.getTweetLongit() - lastTweet.getTweetLongit();
-				//double moveLatit = nextTweet.getLat() - lastTweet.getLat();
-				//lastTweet.set
 				
-				// Also thinking about assigning 1's to all users moving away and 0's to the ones moving inward.
-				// A new user property called movement was added to User.java to do this.
-				if(i != 0 && otherDistance != 0 || !(otherDistance == distance)) //trying to take care of someone moving around the radius and not really
-					//moving outward for inward.
+				//distances is the queue.
+				
+				Tweet tweetFromSet = holdLastTweet.remove(0);
+				holdLastTweet.add(tweetToCompare);
+				//Now call the haversine function to get the distance and store it
+				//in the keepTrackOfDistances.
+				
+				double distanceReturned = 
+				distMiles(tweetFromSet.getLat(), tweetToCompare.getLat(), tweetFromSet.getLon(), tweetToCompare.getLon());
+				
+				//index 0 previous distance to compare.
+				//index 1 should be next distance.
+				keepTrackOfDistanceMeasure.add(distanceReturned);
+				
+				
+				
+				if(keepTrackOfDistanceMeasure.size() == 2)
 				{
-					if(distance > otherDistance)
+					//this means we have a first location and a second 
+					//location. We can now see whether the second location
+					//is greater or less than the first point.
+					overallDistance = distanceReturned;
+					distanceReturned += keepTrackOfDistanceMeasure.get(1);
+					if(distanceReturned > overallDistance)
 					{
-						//this means we moved positive miles
-						System.out.println("With this tweet the user moved" + (distance - otherDistance) + " positive miles from before");
+						System.out.println("+");
 					}
-					else if(distance < otherDistance)
+					else
 					{
-						System.out.println("With this tweet the user moved" + (distance - otherDistance) + " negative miles from before");
+						System.out.println("-");
 					}
+					
 				}
+				
+				
+				
+			}
 			
-			  i++;
+		    //clear distance measures for next user.
 			
+			distances.clear();
+			holdLastTweet.clear();
+			overallDistance = 0;
+			keepTrackOfDistanceMeasure.clear();
+		
 			
 		}
+		
 	}
 	
+	/*
 	
 	public static void ConductQuery() throws ParseException
 	{
