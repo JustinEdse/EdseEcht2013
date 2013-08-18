@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="C:/Users/edse4_000/Desktop/neededjars/lucene-analyzers-1.9.1.jar"/>
 	<classpathentry kind="lib" path="C:/Users/edse4_000/Desktop/neededjars/lucene-core-4.3.1.jar"/>
 	<classpathentry kind="lib" path="C:/Users/edse4_000/Desktop/neededjars/lucene-analyzers-common-4.3.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/edse4_000/Downloads/twitter4j-3.0.3/lib/twitter4j-core-3.0.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
