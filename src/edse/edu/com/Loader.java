@@ -94,7 +94,7 @@ public class Loader
 		// users who have tweeted a certain number of times.
 		System.out.println(users.size());
 		System.out.println(movedUsers.size());
-		
+		NameValidation.check_name(movedUsers);
 		
 		//MOVED USERS IS WHAT WE WANT TO CHECK REAL NAMES FOR.
 		
