@@ -35,10 +35,10 @@ public class NameValidation
 	{
 		// consumer key, consumer secret, etc.
 		ConfigurationBuilder cb = new ConfigurationBuilder();
-		cb.setOAuthConsumerKey("qCCd16UPfwj0GxtndGy36A");
-		cb.setOAuthConsumerSecret("l24XaSmcyI1CjWVE2ct7Nbnu6lzk1BYrwcpYnaRyo");
-		cb.setOAuthAccessToken("416099988-PVg4jwKkkMAZc8GZibrMh3iTgk6JxygMcTR9rxvb");
-		cb.setOAuthAccessTokenSecret("HmHQTFVOrsE9od9UkLrcyJq7D2fZCz3SQgts8eKGdM");
+		cb.setOAuthConsumerKey("Nfqi3CStffNi7TJMyZQhw");
+		cb.setOAuthConsumerSecret("m6RFWLgQx9CvHzmJteEX5F21s3iOdmO4pUqjiO4K5D4");
+		cb.setOAuthAccessToken("416099988-KC0pUGgQ9ATx85FkGywXQHrtdCUNlf9X3DCM91HW");
+		cb.setOAuthAccessTokenSecret("CUjqMeykmPjMz1UEjQx2wXZRqrKvwuAUfn9Lhh9qMlc");
 
 		//TWITTER OBJECT STARTS HERE. NEED TO FIGURE OUT RATE LIMIT EXCEEDED LISTENER.
 		Twitter twitter = new TwitterFactory(cb.build()).getInstance();
@@ -59,7 +59,7 @@ public class NameValidation
 			for (User user : movedUsers)
 			{
 				String userNameForLookUp = user.getUserName();
-				System.out.print("\n\n " + userNameForLookUp);
+				//System.out.print("\n\n " + userNameForLookUp);
 				// name from each user, now look up real name with Twitt4J
 				if (userNameForLookUp != null)
 				{
@@ -67,9 +67,13 @@ public class NameValidation
 					try
 					{
 						twitter4JUser = twitter.showUser(userNameForLookUp);
+				
+						
 						fullName = twitter4JUser.getName();
-
-					} catch (TwitterException e)
+						System.out.println("\t\t\t\t " + fullName);
+						
+					} 
+					catch (TwitterException e)
 					{
 						// TODO Auto-generated catch block
 						if (e.getStatusCode() == 404)
@@ -77,7 +81,12 @@ public class NameValidation
 							System.out
 									.println("THIS USER DOES NOT EXIST. SKIP TO THE NEXT USER");
 							continue;
-						} else if (fullName == null)
+						}else if(e.getStatusCode() == 88)
+						{
+							System.out.println("RATE LIMIT EXCEEDED ERROR");
+							System.exit(1);
+						}
+						else if (fullName == null)
 						{
 							System.out.println("NAME IS NULL");
 							continue;
@@ -88,6 +97,7 @@ public class NameValidation
 
 				String lowerCaseName = fullName.toLowerCase();
 				String lowerCaseUN = userNameForLookUp.toLowerCase();
+				
 				// cases to check for
 				// Need to always check both files regardless and use boolean
 				// values to indicate
@@ -105,12 +115,14 @@ public class NameValidation
 				{
 					while ((lineInMale = readMale.readLine()) != null)
 					{
+					
 						if (lowerCaseName.contains(lineInMale.toLowerCase())
 								|| lowerCaseUN.contains(lineInMale
 										.toLowerCase()))
 						{
 							isMale = true;
 							System.out.println("MALE MATCH");
+							break;
 						}
 					}
 
@@ -122,6 +134,7 @@ public class NameValidation
 						{
 							isFemale = true;
 							System.out.println("FEMALE MATCH");
+							break;
 						}
 					}
 
