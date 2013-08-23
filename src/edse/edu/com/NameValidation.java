@@ -12,12 +12,15 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import twitter4j.RateLimitStatusEvent;
 import twitter4j.RateLimitStatusListener;
+import twitter4j.ResponseList;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
@@ -26,28 +29,43 @@ import twitter4j.conf.ConfigurationBuilder;
 public class NameValidation
 {
 
-
 	// open the male and female text files to get ready for validation.
 	// iterate through the list of users, check each m and f file.
 	// check cases, call genderclassification for text class!!!!
-   
+	static ConfigurationBuilder cb;
+	static Twitter twitter;
+	// ResponseList<twitter4j.User> returnUserInfoList;
+
+	static List<User> gblMovedUsers = new ArrayList<User>();
+	static String lineInMale;
+	static String lineInFemale;
+	static String fullName;
+
+	static BufferedReader readMale;
+	static BufferedReader readFemale;
+
 	public static void check_name(List<User> movedUsers) throws IOException
 	{
 		// consumer key, consumer secret, etc.
-		ConfigurationBuilder cb = new ConfigurationBuilder();
+		cb = new ConfigurationBuilder();
 		cb.setOAuthConsumerKey("Nfqi3CStffNi7TJMyZQhw");
 		cb.setOAuthConsumerSecret("m6RFWLgQx9CvHzmJteEX5F21s3iOdmO4pUqjiO4K5D4");
 		cb.setOAuthAccessToken("416099988-KC0pUGgQ9ATx85FkGywXQHrtdCUNlf9X3DCM91HW");
 		cb.setOAuthAccessTokenSecret("CUjqMeykmPjMz1UEjQx2wXZRqrKvwuAUfn9Lhh9qMlc");
 
-		//TWITTER OBJECT STARTS HERE. NEED TO FIGURE OUT RATE LIMIT EXCEEDED LISTENER.
-		Twitter twitter = new TwitterFactory(cb.build()).getInstance();
-		
-		String lineInMale, lineInFemale, fullName = null;
-		boolean isMale = false, isFemale = false;
+		// TWITTER OBJECT STARTS HERE. NEED TO FIGURE OUT RATE LIMIT EXCEEDED
+		// LISTENER.
+		twitter = new TwitterFactory(cb.build()).getInstance();
+		ArrayList<twitter4j.User> returnUserInfoList = new ArrayList<twitter4j.User>();
+
+		lineInMale = null;
+		lineInFemale = null;
+		fullName = null;
 		BufferedReader readMale = null;
 		BufferedReader readFemale = null;
-		Map<Integer, User> MFMap = new HashMap<Integer, User>();
+		Map<Integer, twitter4j.User> MFMap = new HashMap<Integer, twitter4j.User>();
+		List<User> copiedList = new ArrayList<User>();
+		copiedList = movedUsers;
 
 		try
 		{
@@ -56,161 +74,178 @@ public class NameValidation
 			readFemale = new BufferedReader(new FileReader(
 					"C://data//female//female.txt"));
 
-			for (User user : movedUsers)
+			// CHECKING WHETHER OR NOT EACH USERNAME STILL HAS A VALID TWITTER
+			// ACCOUNT
+
+			Iterator<User> it = movedUsers.iterator();
+
+			while (it.hasNext())
 			{
-				String userNameForLookUp = user.getUserName();
-				//System.out.print("\n\n " + userNameForLookUp);
-				// name from each user, now look up real name with Twitt4J
-				if (userNameForLookUp != null)
+
+				try
 				{
-					twitter4j.User twitter4JUser = null;
-					try
+					User u = it.next();
+					twitter4j.User receivedUser = twitter.showUser(u
+							.getUserName());
+
+				} catch (TwitterException te)
+				{
+					// all requests past 150 per hour return a 400 not a 404.
+					if (te.getStatusCode() == 404)
 					{
-						twitter4JUser = twitter.showUser(userNameForLookUp);
+						it.remove();
+					}
+
+				}
+			}
+			System.out.println(movedUsers.size());
+			gblMovedUsers = movedUsers;
+			int callsToDo = movedUsers.size();
+			int numToDo = (((callsToDo + 99) / 100) * 100) / 100;
+
+			System.out.println("CALLS TO DO ARE " + numToDo);
+			int k = 0;
+			int keepTrackSizeOfUsers = 0;
+			// movedUsers.size();
+
+			while (k < numToDo)
+			{
+				System.out.println("in loop");
+				ResponseList<twitter4j.User> initialReturn = CallTwitterAPI(keepTrackSizeOfUsers);
+				returnUserInfoList.addAll(initialReturn);
+
+				k++;
+				System.out.println("this is k " + k);
+				keepTrackSizeOfUsers += 100;
+
+			}
+
+			// Now I have each users real name registered from twitter in the
+			// returnUserInfoList. I can use this and the male/female file to
+			// start to get a gauge on whether this person might be male or
+			// female.
+
+			System.out.println("\n\n HEY " + returnUserInfoList.size());
+
+			for (twitter4j.User tuser : returnUserInfoList)
+			{
+				String realName = tuser.getName();
+
+				int result = NameValidation.CheckGenderByFile(realName);
+
+				MFMap.put(result, tuser);
 				
-						
-						fullName = twitter4JUser.getName();
-						System.out.println("\t\t\t\t " + fullName);
-						
-					} 
-					catch (TwitterException e)
-					{
-						// TODO Auto-generated catch block
-						if (e.getStatusCode() == 404)
-						{
-							System.out
-									.println("THIS USER DOES NOT EXIST. SKIP TO THE NEXT USER");
-							continue;
-						}else if(e.getStatusCode() == 88)
-						{
-							System.out.println("RATE LIMIT EXCEEDED ERROR");
-							System.exit(1);
-						}
-						else if (fullName == null)
-						{
-							System.out.println("NAME IS NULL");
-							continue;
-						}
-					}
+				//CALL GENDER CLASSIFICATION CLASS TO FURTHER CONFIRM WHETHER OR NOT
+				//THE RESULT PARAMETER OF A 0 OR A 1 WAS CORRECT.
+				double probablity = GenderClassification.CheckGender(MFMap, gblMovedUsers);
 
+			}
+
+			
+
+		} catch (IOException ioe)
+		{
+			ioe.printStackTrace();
+		}
+	}
+
+	public static int CheckGenderByFile(String realName) throws IOException
+	{
+		int result = 0;
+		boolean mMatch = false;
+		boolean fMatch = false;
+		try
+		{
+			while ((lineInMale = readMale.readLine()) != null)
+			{
+				if(realName.toLowerCase().contains(lineInMale))
+				{
+					mMatch = true;
+					break;
 				}
-
-				String lowerCaseName = fullName.toLowerCase();
-				String lowerCaseUN = userNameForLookUp.toLowerCase();
 				
-				// cases to check for
-				// Need to always check both files regardless and use boolean
-				// values to indicate
-				// if male = true, female = true, or male = true and female =
-				// true, meaning
-				// the name was found in both files. Or if the name was not
-				// found analyze text like
-				// regular.
-				// MALE = (MALE NAME + TEXT MALEPOSITIVE) OR (NO MALE NAME +
-				// TEXT MALEPOSITIVE)
-				// FEMALE = (FEMALE NAME + TEXT FEMALEPOSITIVE) OR (NO FEMALE
-				// NAME + TEXT FEMPOS)
-				// (MALE AND FEMALE NAME + TEXT MALE OR FEMALE POSITIVE)
-				if (lowerCaseName != null)
+			}
+			
+			while((lineInFemale = readFemale.readLine()) != null)
+			{
+				if(realName.toLowerCase().contains(lineInFemale))
 				{
-					while ((lineInMale = readMale.readLine()) != null)
-					{
-					
-						if (lowerCaseName.contains(lineInMale.toLowerCase())
-								|| lowerCaseUN.contains(lineInMale
-										.toLowerCase()))
-						{
-							isMale = true;
-							System.out.println("MALE MATCH");
-							break;
-						}
-					}
-
-					while ((lineInFemale = readFemale.readLine()) != null)
-					{
-						if (lowerCaseName.contains(lineInFemale.toLowerCase())
-								|| lowerCaseUN.contains(lineInFemale
-										.toLowerCase()))
-						{
-							isFemale = true;
-							System.out.println("FEMALE MATCH");
-							break;
-						}
-					}
-
+					fMatch = true;
+					break;
 				}
+			}
+			
+			//different scenarios of matches in the file of male & female.
+			
+			if(fMatch == true && mMatch == false)
+			{
+				result = 0;
+			}
+			else if(mMatch == true && fMatch == false)
+			{
+				result = 1;
+			}
+			else if((mMatch == true && fMatch == true) || (mMatch == false && fMatch == false))
+			{
+				// don't know....by name.
+				//CALL GENDER VERIFICATION IN OTHER CLASS TO STRENGTHEN
+				//ARGUMENT OF WHETHER A PERSON IS MALE OR FEMALE
+				//BY LOOKING AT SEVERAL OF THEIR TWEET TEXTS.
+				result = -1;
+				
+				
+			}
+	
+		} catch (IOException ioe)
+		{
+			ioe.printStackTrace();
+		}
 
-				// DO TEXT ANALYSIS FEATURES ALL THE TIME REGARDLESS IF MALE AND
-				// FEMALE BOOL COMBINATIONS.
-				// PASS THE USER OBJECT AS A PARAMETER TO THE
-				// GENDERCLASSIFICATION CLASS AND THEN RETURN A
-				// PROBABILITY OF MALE OR FEMALE AUTHOR. MUST ANALYZE ALL OF THE
-				// USER'S TWEETS IN THE OTHER CLASS.
-				// ASSIGN A 1 FOR MALE AND A 0 FOR FEMALE USER.
-				// int returnedEstimate =
-				// GenderClassification.EstimateGender(user);
+		return result;
+	}
 
-				int returnedEstimate = 0;
+	public static ResponseList<twitter4j.User> CallTwitterAPI(int keepTrackSize)
+	{
 
-				if (isMale == true && isFemale == false)
-				{
-					if (returnedEstimate == 1)
-					{
-						// male, assign to map for the given user.
-						MFMap.put(returnedEstimate, user);
-					}
-				} else if (isFemale == true && isMale == false)
-				{
-					if (returnedEstimate == 0)
-					{
-						// female
-						MFMap.put(returnedEstimate, user);
-					}
+		System.out.println(keepTrackSize);
+		String[] tempArr = new String[100];
+		ResponseList<twitter4j.User> tempList = null;
+		int startPosition = 0;
+		int catchStop = 0;
 
-				} else if (isMale == true && isFemale == true
-						|| (isMale == false && isFemale == false))
-				{
-					// assign based on returnedEstimate. name encountered in
-					// both files.
-					MFMap.put(returnedEstimate, user);
-				}
+		for (startPosition = keepTrackSize; startPosition < gblMovedUsers
+				.size(); startPosition++)
+		{
+			System.out.println(startPosition);
+			System.out.println(keepTrackSize);
 
+			tempArr[catchStop] = gblMovedUsers.get(startPosition).getUserName();
+
+			catchStop++;
+
+			if (catchStop == 100)
+			{
+				break;
 			}
 
 		}
 
-		catch (FileNotFoundException e)
+		try
+		{
+			// returning value into tempList.
+			System.out.println(tempArr.length);
+
+			tempList = twitter.lookupUsers(tempArr);
+			System.out.println("size to call api with " + tempList.size());
+		} catch (TwitterException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 
-        twitter.addRateLimitStatusListener(new RateLimitStatusListener() {
-            public void onRateLimitStatus(RateLimitStatusEvent event) {
-                System.out.println("onRateLimitStatus" + event);
-               
-            }
-
-            public void onRateLimitReached(RateLimitStatusEvent event)
-            {   //when the time reamining to call again hits zero I can request more information about a user.
-            	try
-				{
-					Thread.sleep(2000);
-				} catch (InterruptedException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-            }
-
-        });
-		readMale.close();
-		readFemale.close();
+		Arrays.fill(tempArr, "");
+		catchStop = 0;
+		return tempList;
 
 	}
-	
-	
-
-	
 }

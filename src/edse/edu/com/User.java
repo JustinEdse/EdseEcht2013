@@ -47,7 +47,7 @@ public class User
 		for(Tweet secondTweet: this.tweets.subList(1, this.tweets.size())){
 			double dist = greatCircle(tweet.lat, tweet.lon, secondTweet.lat, secondTweet.lon);
 
-			if(dist > .100)
+			if(dist > .005)
 			{
 				moved = true;
 				break;	
