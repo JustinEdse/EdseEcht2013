@@ -3,8 +3,7 @@
 //in a map or some other structure. Of course the name could be not found or may be in both files. If it is either of these two
 //cases further explanation will be needed. Also all the text of each user's tweets must be checked for gender classification.
 //We check all of their tweets so more text is available to analyze. Using both a real name and the text of a user's tweets,
-//a classification can be made whether or not they're male or female
-
+//a classification can be made whether or not they're male or female...
 package edse.edu.com;
 
 import java.io.BufferedReader;
