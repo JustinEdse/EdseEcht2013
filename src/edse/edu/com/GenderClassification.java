@@ -25,6 +25,8 @@ public class GenderClassification
 		
 		//This is kind of a wacky way of doing this but, since the list of twitter4j didn't have text returned
 		//as well, I needed to grab the each users tweets from the movedUsers List that I already had.
+		
+		System.out.println("SIZE OF MOVEDUSERS AND MDUSER" + userMap.size() + " " + movedUsers.size());
 		for(edse.edu.com.User mdUser : movedUsers)
 		{
 			
@@ -46,10 +48,19 @@ public class GenderClassification
 		    	}
 		    	try
 				{
-		    		System.out.println("TWEET TEXT " + tweetText + "\n");
+		    		if(tweetText != null)
+		    		{
+		    		System.out.println("TWEET TEXT " + tweetText.toString() + "\n");
 		    		
-					//double[] fDist = WekaNaiveBayes.init(tweetText.toString());
-					//System.out.println("FSCORE = " + fDist);
+					FilteredLearner.init();
+					FilteredClassifier.classifyNewInstance(tweetText.toString());
+		    		}
+		    		else
+		    		{
+		    			System.out.println("Tweet text is null!");
+		    			System.exit(-1);
+		    			
+		    		}
 					
 				} 
 		    	catch (Exception e)

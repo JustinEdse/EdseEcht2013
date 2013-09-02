@@ -132,7 +132,8 @@ import weka.filters.unsupervised.attribute.StringToWordVector;
 		FilteredClassifier classifier;
 		
 			classifier = new FilteredClassifier();
-			classifier.load("C://gender.arff");
+			//classifier.load(newText);
+			//classifier.load("C://gender.arff");
 			classifier.loadModel("C://outmodel.model");
 			classifier.makeInstance(newText);
 			classifier.classify();

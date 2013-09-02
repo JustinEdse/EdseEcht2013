@@ -36,6 +36,7 @@ public class NameValidation
 	static Twitter twitter;
 	// ResponseList<twitter4j.User> returnUserInfoList;
 
+	static int q = 0;
 	static List<User> gblMovedUsers = new ArrayList<User>();
 	static String lineInMale = "";
 	static String lineInFemale = "";
@@ -133,19 +134,24 @@ public class NameValidation
 				String realName = tuser.getName();
 				System.out.println(realName);
 				int result = NameValidation.CheckGenderByFile(realName);
-
-				MFMap.put(result, tuser);
+				
+				if(result == -1 || result == 1 || result == 0 || result == -2){
+				MFMap.put(result, tuser);}
+				
+				
 
 				// CALL GENDER CLASSIFICATION CLASS TO FURTHER CONFIRM WHETHER
 				// OR NOT
 				// THE RESULT PARAMETER OF A 0 OR A 1 WAS CORRECT.
-				System.out.println("AT PROBABILITY\n");
-				double probablity = GenderClassification.CheckGender(MFMap,
-						gblMovedUsers);
+				System.out.println("AT PROBABILITY\n" + MFMap.size());
+				
 				
 
 			}
-
+			
+			System.out.println("INNAMEVALIDATION BEFOE CALL TO GENDERCLASSIFICATION!!! " + MFMap.size() + "\t" + gblMovedUsers.size() + "\t\n " + q);
+			double probablity = GenderClassification.CheckGender(MFMap,
+						gblMovedUsers);
 			// closing male and female buffers here.
 			readMale.close();
 			readFemale.close();
@@ -158,6 +164,7 @@ public class NameValidation
 	public static int CheckGenderByFile(String initialName) throws IOException
 	{
 
+		
 		int result = 0;
 		boolean mMatch = false;
 		boolean fMatch = false;
@@ -241,6 +248,8 @@ public class NameValidation
 
 			ioe.printStackTrace();
 		}
+		
+		q++;
 
 		return result;
 	}
