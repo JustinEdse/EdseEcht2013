@@ -9,5 +9,17 @@
 	<classpathentry kind="lib" path="C:/Users/edse4_000/Desktop/neededjars/lucene-core-4.3.1.jar"/>
 	<classpathentry kind="lib" path="C:/Users/edse4_000/Desktop/neededjars/lucene-analyzers-common-4.3.1.jar"/>
 	<classpathentry kind="lib" path="C:/Users/edse4_000/Downloads/twitter4j-3.0.3/lib/twitter4j-core-3.0.3.jar"/>
+	<classpathentry kind="lib" path="C:/Users/edse4_000/Downloads/poi-bin-3.9-20121203/poi-3.9/poi-3.9-20121203.jar"/>
+	<classpathentry kind="lib" path="C:/Users/edse4_000/Downloads/poi-bin-3.9-20121203/poi-3.9/poi-examples-3.9-20121203.jar"/>
+	<classpathentry kind="lib" path="C:/Users/edse4_000/Downloads/poi-bin-3.9-20121203/poi-3.9/poi-excelant-3.9-20121203.jar"/>
+	<classpathentry kind="lib" path="C:/Users/edse4_000/Downloads/poi-bin-3.9-20121203/poi-3.9/poi-ooxml-3.9-20121203.jar"/>
+	<classpathentry kind="lib" path="C:/Users/edse4_000/Downloads/poi-bin-3.9-20121203/poi-3.9/poi-ooxml-schemas-3.9-20121203.jar"/>
+	<classpathentry kind="lib" path="C:/Users/edse4_000/Downloads/poi-bin-3.9-20121203/poi-3.9/poi-scratchpad-3.9-20121203.jar"/>
+	<classpathentry kind="lib" path="C:/Users/edse4_000/Downloads/poi-bin-3.9-20121203/poi-3.9/ooxml-lib/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/edse4_000/Downloads/poi-bin-3.9-20121203/poi-3.9/ooxml-lib/stax-api-1.0.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/edse4_000/Downloads/poi-bin-3.9-20121203/poi-3.9/ooxml-lib/xmlbeans-2.3.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/edse4_000/Downloads/poi-bin-3.9-20121203/poi-3.9/lib/commons-codec-1.5.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files (x86)/Weka-3-6/weka.jar"/>
+	<classpathentry kind="lib" path="C:/Users/edse4_000/Downloads/weka-dev-3.7.5-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -58,17 +58,13 @@ public class NameValidation
 		twitter = new TwitterFactory(cb.build()).getInstance();
 		ArrayList<twitter4j.User> returnUserInfoList = new ArrayList<twitter4j.User>();
 
-		
-		//lineInFemale = null;
-		//fullName = null;
-		
+		// lineInFemale = null;
+		// fullName = null;
+
 		Map<Integer, twitter4j.User> MFMap = new HashMap<Integer, twitter4j.User>();
-		
-	
 
 		try
 		{
-			
 
 			System.out.println("male" + readMale + " " + readFemale);
 			// CHECKING WHETHER OR NOT EACH USERNAME STILL HAS A VALID TWITTER
@@ -122,13 +118,13 @@ public class NameValidation
 			// start to get a gauge on whether this person might be male or
 			// female.
 
-			System.out.println("\n\n HEY " + returnUserInfoList.size());
+			System.out.println("\n\n HEY  user list size is" + returnUserInfoList.size());
 
 			for (twitter4j.User tuser : returnUserInfoList)
 			{
-				//Need to reopen or establish the filereader each time
-				//a new user needs to be checked for male or female.
-				//If this is not done readMale and readFemale are NULL.
+				// Need to reopen or establish the filereader each time
+				// a new user needs to be checked for male or female.
+				// If this is not done readMale and readFemale are NULL.
 				readMale = new BufferedReader(new FileReader(
 						"C://data//male//male.txt"));
 				readFemale = new BufferedReader(new FileReader(
@@ -139,16 +135,18 @@ public class NameValidation
 				int result = NameValidation.CheckGenderByFile(realName);
 
 				MFMap.put(result, tuser);
-				
-				//CALL GENDER CLASSIFICATION CLASS TO FURTHER CONFIRM WHETHER OR NOT
-				//THE RESULT PARAMETER OF A 0 OR A 1 WAS CORRECT.
+
+				// CALL GENDER CLASSIFICATION CLASS TO FURTHER CONFIRM WHETHER
+				// OR NOT
+				// THE RESULT PARAMETER OF A 0 OR A 1 WAS CORRECT.
 				System.out.println("AT PROBABILITY\n");
-				double probablity = GenderClassification.CheckGender(MFMap, gblMovedUsers);
+				double probablity = GenderClassification.CheckGender(MFMap,
+						gblMovedUsers);
+				
 
 			}
 
-			
-			//closing male and female buffers here.
+			// closing male and female buffers here.
 			readMale.close();
 			readFemale.close();
 		} catch (IOException ioe)
@@ -159,89 +157,91 @@ public class NameValidation
 
 	public static int CheckGenderByFile(String initialName) throws IOException
 	{
-		
+
 		int result = 0;
 		boolean mMatch = false;
 		boolean fMatch = false;
 		String realName = null;
-		
-		String fixedName = initialName.replaceAll("[?]", " ");
-		
-		
-		if(fixedName.contains(" "))
+
+		// array with characters to remove from real name provided.
+		//String[] charsToRemove = new String[3];
+		//charsToRemove[0] = "?";
+		//charsToRemove[1] = "@";
+		//charsToRemove[2] = ".";
+		//String fixedName = initialName;
+		//for (int i = 0; i < charsToRemove.length; i++)
+		//{
+			//fixedName = initialName.replaceAll(charsToRemove[i], " ");
+
+		//}
+		 String fixedName = initialName.replaceAll("[?]", " ");
+		// String.
+
+		if (fixedName.contains(" "))
 		{
 			String nameArr[] = fixedName.split(" ");
 			realName = nameArr[0];
-		}
-		else
+		} else
 		{
 			String realSplit = NameValidation.splitCamelCase(fixedName);
 			String endResult[] = realSplit.split(" ");
 			realName = endResult[0];
 		}
-		
+
 		try
 		{
 			while ((lineInMale = readMale.readLine()) != null)
 			{
-				if(realName.equalsIgnoreCase(lineInMale))
+				if (realName.equalsIgnoreCase(lineInMale))
 				{
 					mMatch = true;
 					System.out.println("MALE MATCH DETECTED");
 					break;
 				}
-				
+
 			}
-			
-			while((lineInFemale = readFemale.readLine()) != null)
+
+			while ((lineInFemale = readFemale.readLine()) != null)
 			{
-				if(realName.equalsIgnoreCase(lineInFemale))
+				if (realName.equalsIgnoreCase(lineInFemale))
 				{
 					fMatch = true;
 					System.out.println("FEMALE MATCH DETECTED");
 					break;
 				}
 			}
-			
-			//different scenarios of matches in the file of male & female.
-			
-			if(fMatch == true && mMatch == false)
+
+			// different scenarios of matches in the file of male & female.
+
+			if (fMatch == true && mMatch == false)
 			{
 				result = 0;
 				System.out.println("FEMALE");
-			}
-			else if(mMatch == true && fMatch == false)
+			} else if (mMatch == true && fMatch == false)
 			{
 				result = 1;
 				System.out.println("MALE");
-			}
-			else if(mMatch == true && fMatch == true)
+			} else if (mMatch == true && fMatch == true)
 			{
 				// don't know....by name.
-				//CALL GENDER VERIFICATION IN OTHER CLASS TO STRENGTHEN
-				//ARGUMENT OF WHETHER A PERSON IS MALE OR FEMALE
-				//BY LOOKING AT SEVERAL OF THEIR TWEET TEXTS.
+				// CALL GENDER VERIFICATION IN OTHER CLASS TO STRENGTHEN
+				// ARGUMENT OF WHETHER A PERSON IS MALE OR FEMALE
+				// BY LOOKING AT SEVERAL OF THEIR TWEET TEXTS.
 				result = -1;
 				System.out.println("NAME MATCHED IN BOTH FILES");
-				
-				
-			}
-			else if(mMatch == false && fMatch == false)
+
+			} else if (mMatch == false && fMatch == false)
 			{
 				result = -2;
 				System.out.println("NO NAME MATCH IN EITHER FILE");
 			}
-			
-	
-		} 
-		catch (IOException ioe)
+
+		} catch (IOException ioe)
 		{
-			
+
 			ioe.printStackTrace();
 		}
-		
-		
-		
+
 		return result;
 	}
 
@@ -289,17 +289,14 @@ public class NameValidation
 		return tempList;
 
 	}
+
 	
 	// A handy method to Split real names at camel casing if the user
 	// wrote something such as this; ChristopherPolini or christopherPolini.
-	static String splitCamelCase(String s) {
-		   return s.replaceAll(
-		      String.format("%s|%s|%s",
-		         "(?<=[A-Z])(?=[A-Z][a-z])",
-		         "(?<=[^A-Z])(?=[A-Z])",
-		         "(?<=[A-Za-z])(?=[^A-Za-z])"
-		      ),
-		      " "
-		   );
-		}
+	static String splitCamelCase(String s)
+	{
+		return s.replaceAll(String.format("%s|%s|%s",
+				"(?<=[A-Z])(?=[A-Z][a-z])", "(?<=[^A-Z])(?=[A-Z])",
+				"(?<=[A-Za-z])(?=[^A-Za-z])"), " ");
+	}
 }

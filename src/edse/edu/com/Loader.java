@@ -161,7 +161,7 @@ public class Loader
 			// header elements at the top of the csv file. Those need to be
 			// accounted for.
 			final String[] header = { null, "time", "lat", "lon", "goog_x",
-					"goog_y", null, "sender_name", null, null, null, null, null };
+					"goog_y", null, "sender_name", null, null, null, null, "tweet_text" };
 			final CellProcessor[] processors = getProcessors();
 
 			// In the .csv file the time is organized like this, 2013-04-15
