@@ -62,7 +62,7 @@ public class NameValidation
 		// lineInFemale = null;
 		// fullName = null;
 
-		Map<Integer, twitter4j.User> MFMap = new HashMap<Integer, twitter4j.User>();
+		Map<twitter4j.User, Integer> MFMap = new HashMap<twitter4j.User, Integer>();
 
 		try
 		{
@@ -136,7 +136,7 @@ public class NameValidation
 				int result = NameValidation.CheckGenderByFile(realName);
 				
 				if(result == -1 || result == 1 || result == 0 || result == -2){
-				MFMap.put(result, tuser);}
+				MFMap.put(tuser, result);}
 				
 				
 
