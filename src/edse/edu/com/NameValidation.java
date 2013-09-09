@@ -121,6 +121,9 @@ public class NameValidation
 
 			System.out.println("\n\n HEY  user list size is" + returnUserInfoList.size());
 
+			int c = 0;
+			int p = 0;
+			ArrayList<String> bothFiles = new ArrayList<>();
 			for (twitter4j.User tuser : returnUserInfoList)
 			{
 				// Need to reopen or establish the filereader each time
@@ -132,9 +135,21 @@ public class NameValidation
 						"C://data//female//female.txt"));
 
 				String realName = tuser.getName();
+				String checkScreenName = tuser.getScreenName();
+				String userDesc = tuser.getDescription();
 				System.out.println(realName);
-				int result = NameValidation.CheckGenderByFile(realName);
+				int result = NameValidation.CheckGenderByFile(realName, checkScreenName, userDesc);
 				
+				if(result == -1)
+				{
+					p++;
+					bothFiles.add(realName);
+				}
+				else if(result == -2)
+				{
+					c++;
+					
+				}
 				if(result == -1 || result == 1 || result == 0 || result == -2){
 				MFMap.put(tuser, result);}
 				
@@ -148,9 +163,11 @@ public class NameValidation
 				
 
 			}
-			
+			System.out.println("in both files \n" + p);
+			System.out.println(bothFiles);
+			System.out.println("in neither fiels " + c);
 			System.out.println("INNAMEVALIDATION BEFOE CALL TO GENDERCLASSIFICATION!!! " + MFMap.size() + "\t" + gblMovedUsers.size() + "\t\n " + q);
-			double probablity = GenderClassification.CheckGender(MFMap,
+			GenderClassification.CheckGender(MFMap,
 						gblMovedUsers);
 			// closing male and female buffers here.
 			readMale.close();
@@ -161,7 +178,7 @@ public class NameValidation
 		}
 	}
 
-	public static int CheckGenderByFile(String initialName) throws IOException
+	public static int CheckGenderByFile(String initialName, String screenName, String userDesc) throws IOException
 	{
 
 		
@@ -169,6 +186,9 @@ public class NameValidation
 		boolean mMatch = false;
 		boolean fMatch = false;
 		String realName = null;
+		String realScreenName = null;
+		
+		String nameFromFile = null;
 
 		// array with characters to remove from real name provided.
 		//String[] charsToRemove = new String[3];
@@ -182,8 +202,21 @@ public class NameValidation
 
 		//}
 		 String fixedName = initialName.replaceAll("[?]", " ");
-		// String.
+		 String fixedSC = screenName.replaceAll("[?]", " ");
 
+		 if(fixedSC.contains(" "))
+		 {
+			
+				String scArr[] = fixedSC.split(" ");
+				realScreenName = scArr[0];
+		 }
+		 else
+		 {
+				String realSCSplit = NameValidation.splitCamelCase(fixedSC);
+				String endSC[] = realSCSplit.split(" ");
+				realScreenName = endSC[0];
+		 }
+		 
 		if (fixedName.contains(" "))
 		{
 			String nameArr[] = fixedName.split(" ");
@@ -199,10 +232,13 @@ public class NameValidation
 		{
 			while ((lineInMale = readMale.readLine()) != null)
 			{
-				if (realName.equalsIgnoreCase(lineInMale))
+				String lowerM = lineInMale.toLowerCase();
+				if (realName.equalsIgnoreCase(lineInMale) || (realScreenName.toLowerCase().equalsIgnoreCase(lowerM)))
 				{
+					
 					mMatch = true;
 					System.out.println("MALE MATCH DETECTED");
+					
 					break;
 				}
 
@@ -210,10 +246,13 @@ public class NameValidation
 
 			while ((lineInFemale = readFemale.readLine()) != null)
 			{
-				if (realName.equalsIgnoreCase(lineInFemale))
+				String lower = lineInFemale.toLowerCase();
+				if ((realName.equalsIgnoreCase(lineInFemale) || (realScreenName.toLowerCase().equalsIgnoreCase(lower))))
 				{
+					
 					fMatch = true;
 					System.out.println("FEMALE MATCH DETECTED");
+					
 					break;
 				}
 			}
@@ -239,8 +278,19 @@ public class NameValidation
 
 			} else if (mMatch == false && fMatch == false)
 			{
+				if(userDesc.matches("(Husband|husband|Son|son|Dad|dad|Father|father|Uncle|uncle|Grandpa|grandpa|grandfatner|Grandfather)"))
+				{
+					result = 1;
+				}
+				else if(userDesc.matches("(Mom|mom|Mother|mother|Daughter|daughter|Aunt|aunt|Grandma|grandma|Grandmother|grandmother|Wife|wife)"))
+				{
+					result = 0;
+				}
+				else 
+				{
 				result = -2;
 				System.out.println("NO NAME MATCH IN EITHER FILE");
+				}
 			}
 
 		} catch (IOException ioe)
@@ -249,7 +299,7 @@ public class NameValidation
 			ioe.printStackTrace();
 		}
 		
-		q++;
+	
 
 		return result;
 	}

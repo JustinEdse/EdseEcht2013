@@ -112,31 +112,39 @@ import weka.filters.unsupervised.attribute.StringToWordVector;
 	 * This method performs the classification of the instance.
 	 * Output is done at the command-line.
 	 */
-	public void classify() {
+	public String classify() {
+		double pred = 0.0;
 		try {
-			double pred = classifier.classifyInstance(instances.instance(0));
+			pred = classifier.classifyInstance(instances.instance(0));
 			System.out.println("===== Classified instance =====");
 			System.out.println("Class predicted: " + instances.classAttribute().value((int) pred));
 		}
-		catch (Exception e) {
+		catch (Exception e) 
+		{
 			System.out.println("Problem found when classifying the text");
 		}		
+		
+		return  instances.classAttribute().value((int) pred);
+		
 	}
 	
 	/**
 	 * Main method. It is an example of the usage of this class.
 	 * @param args Command-line arguments: fileData and fileModel.
 	 */
-	public static void classifyNewInstance (String newText) {
+	public static String classifyNewInstance (String newText) {
 	 
 		FilteredClassifier classifier;
+		String result = null;
 		
 			classifier = new FilteredClassifier();
 			//classifier.load(newText);
 			//classifier.load("C://gender.arff");
 			classifier.loadModel("C://outmodel.model");
 			classifier.makeInstance(newText);
-			classifier.classify();
+			result = classifier.classify();
+			
+			return result;
 		}
 	
 }	
