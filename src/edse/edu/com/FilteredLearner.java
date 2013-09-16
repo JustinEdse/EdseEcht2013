@@ -78,7 +78,7 @@ public class FilteredLearner
 		
 			classifier.setFilter(filter);
 			
-			classifier.setClassifier(new NaiveBayes());
+			classifier.setClassifier(new weka.classifiers.bayes.NaiveBayesMultinomial());
 			
 			Evaluation eval = new Evaluation(trainData);
 			
@@ -104,7 +104,7 @@ public class FilteredLearner
 		{
 			
 			trainData.setClassIndex(trainData.numAttributes() -1);
-			Classifier naiveBayes = new NaiveBayes();
+			Classifier naiveBayes = new weka.classifiers.bayes.NaiveBayesMultinomial();
 			
 			StringToWordVector stringToWordVector = new StringToWordVector();
 			
@@ -162,12 +162,12 @@ public class FilteredLearner
 		FilteredLearner learner;
 
 		learner = new FilteredLearner();
-		learner.loadDataset("C://gender.arff");
+		learner.loadDataset("C://Users//edse4_000//Desktop//usersnext.arff");
 		// Evaluation must be done before training
 		// More info in: http://weka.wikispaces.com/Use+WEKA+in+your+Java+code
 		learner.evaluate();
 		learner.learn();
-		learner.saveModel("C://outmodel.model");
+		learner.saveModel("C://outgend.model");
 	}
 
 }

@@ -74,16 +74,16 @@ public class Loader
 		// could be from April 15th or over the course
 		// of a couple days close to that.//load one day for now.//filter .csv
 		// file to 18:49 GMT.
-		tweets = Loader.loadTweetsFromFile("C://fin4.csv");
+		tweets = Loader.loadTweetsFromFile("C://csvfileedit.csv");
 		List<User> users = User.tweetsToUsers(tweets);
 		List<User> movedUsers = new ArrayList<User>();
 
 		for (User user : users)
 		{
-			if (user.hasMove())
-			{
+			//if (user.hasMove())
+			//{
 				movedUsers.add(user);
-			}
+			//}
 		}
 
 		// Calling distance and direction method to operate on each users tweets
@@ -108,6 +108,8 @@ public class Loader
 		 * catch (IOException e) { e.printStackTrace(); }
 		 */
 		// Loader.ConductQuery();
+		
+		System.exit(0);
 
 	}
 
@@ -196,6 +198,7 @@ public class Loader
 				} catch (SuperCsvConstraintViolationException e)
 				{
 					System.out.println("Skipped");
+					e.printStackTrace();
 				}
 			}
 		} finally

@@ -13,6 +13,8 @@ public class User
 	private String username;
 	private List<Tweet> tweets;
 	private int movement = 0;
+	private String description;
+	private String realName;
 	
 	public User(String username, List<Tweet> tweets)
 	{
@@ -20,6 +22,25 @@ public class User
 		this.tweets = tweets;
 		this.movement = 0;
 	}
+	
+	public void setDescription(String description)
+	{
+		this.description = description;
+	}
+	public String getDescription()
+	{
+		return this.description;
+	}
+	
+	public void setRealName(String realName)
+	{
+		this.realName = realName;
+	}
+	public String getRealName()
+	{
+		return this.realName;
+	}
+	
 	
 	public int getMovement()
 	{
@@ -38,7 +59,7 @@ public class User
 	{
 		return this.tweets;
 	}
-	
+	/*
 	public boolean hasMove()
 	{
 		Tweet tweet = this.tweets.get(0);
@@ -47,7 +68,7 @@ public class User
 		for(Tweet secondTweet: this.tweets.subList(1, this.tweets.size())){
 			double dist = greatCircle(tweet.lat, tweet.lon, secondTweet.lat, secondTweet.lon);
 
-			if(dist > .005)
+			if(dist > 0)
 			{
 				moved = true;
 				break;	
@@ -56,7 +77,7 @@ public class User
 		}
 		return moved;
 	}
-
+*/
 	public static double greatCircle(double lat1, double lng1, double lat2, double lng2)
 	{
 		// aka checking distance between two points

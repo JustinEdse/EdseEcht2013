@@ -25,6 +25,11 @@ import weka.filters.unsupervised.attribute.StringToWordVector;
 
  public class FilteredClassifier {
 
+
+	 String name = "";
+	 String scrname = "";
+	 String desc = "";
+	 
 	/**
 	 * String that stores the text to classify
 	 */
@@ -80,27 +85,45 @@ import weka.filters.unsupervised.attribute.StringToWordVector;
 	/**
 	 * This method creates the instance to be classified, from the text that has been read.
 	 */
-	public void makeInstance(String newTextInstance) {
+	public void makeInstance(String nameParam, String scName, String userDesc, String newTextInstance) {
 		
+		
+		name = nameParam;
+		scrname = scName;
+		desc = userDesc;
 		text = newTextInstance;
 		
-		// Create the attributes, class and text
+		
+		
+		// Create the attributes: 0 | 1, real name | scname | desc | text | class val
 		FastVector fvNominalVal = new FastVector(2);
 		fvNominalVal.addElement("MALE");
 		fvNominalVal.addElement("FEMALE");
-		Attribute attribute1 = new Attribute("text",(FastVector) null);
-		Attribute attribute2 = new Attribute("class", fvNominalVal);
+		Attribute attribute1 = new Attribute("name", (FastVector) null);
+		Attribute attribute2 = new Attribute("scrname", (FastVector) null);
+		Attribute attribute3 = new Attribute("desc", (FastVector) null);
+		Attribute attribute4 = new Attribute("text",(FastVector) null);
+		Attribute attribute5 = new Attribute("class", fvNominalVal);
 		
 		// Create list of instances with one element
-		FastVector fvWekaAttributes = new FastVector(2);
+		FastVector fvWekaAttributes = new FastVector(5);
 		fvWekaAttributes.addElement(attribute1);
 		fvWekaAttributes.addElement(attribute2);
+		fvWekaAttributes.addElement(attribute3);
+		fvWekaAttributes.addElement(attribute4);
+		fvWekaAttributes.addElement(attribute5);
+	
 		instances = new Instances("Test relation", fvWekaAttributes, 1);           
 		// Set class index
 		instances.setClassIndex(instances.numAttributes()-1);
 		// Create and add the instance
-		Instance instance = new Instance(2);
-		instance.setValue(attribute1, text);
+		
+		Instance instance = new Instance(5);
+		instance.setValue(attribute1, name);
+		instance.setValue(attribute2, scrname);
+		instance.setValue(attribute3, desc);
+		instance.setValue(attribute4, text);
+		//instance.setValue(attribute6, fvNominalVal);
 		// Another way to do it:
 		// instance.setValue((Attribute)fvWekaAttributes.elementAt(1), text);
 		instances.add(instance);
@@ -132,16 +155,17 @@ import weka.filters.unsupervised.attribute.StringToWordVector;
 	 * Main method. It is an example of the usage of this class.
 	 * @param args Command-line arguments: fileData and fileModel.
 	 */
-	public static String classifyNewInstance (String newText) {
+	public static String classifyNewInstance (String uName, String uScrn, String desc, String newText) {
 	 
 		FilteredClassifier classifier;
 		String result = null;
 		
 			classifier = new FilteredClassifier();
-			//classifier.load(newText);
-			//classifier.load("C://gender.arff");
-			classifier.loadModel("C://outmodel.model");
-			classifier.makeInstance(newText);
+			classifier.load("C://Users//edse4_000//Desktop//usersnext.arff");
+			classifier.loadModel("C://outgend.model");
+			//if(uName != null && uScrn != null && desc != null && newText != null){
+			classifier.makeInstance(uName, uScrn, desc, newText);
+			//}
 			result = classifier.classify();
 			
 			return result;

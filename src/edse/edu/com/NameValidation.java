@@ -44,6 +44,9 @@ public class NameValidation
 
 	static BufferedReader readMale;
 	static BufferedReader readFemale;
+	
+	static String[] maleDesc = {"Boyfriend", "boyfriend","Husband","husband", "Father", "father", "Son", "son", "Uncle", "uncle", "Grandpa", "grandpa", "Grandfather", "grandfather", "Brother", "brother"};
+	static String[] femaleDesc = {"Girlfriend", "girlfriend","Mother", "mother", "Wife", "wife", "Aunt", "aunt", "Mother", "mother", "Sister", "sister", "Grandmother", "grandmother", "grandma", "Grandma"};
 
 	public static void check_name(List<User> movedUsers) throws IOException
 	{
@@ -165,7 +168,7 @@ public class NameValidation
 			}
 			System.out.println("in both files \n" + p);
 			System.out.println(bothFiles);
-			System.out.println("in neither fiels " + c);
+			System.out.println("in neither fields " + c);
 			System.out.println("INNAMEVALIDATION BEFOE CALL TO GENDERCLASSIFICATION!!! " + MFMap.size() + "\t" + gblMovedUsers.size() + "\t\n " + q);
 			GenderClassification.CheckGender(MFMap,
 						gblMovedUsers);
@@ -201,8 +204,9 @@ public class NameValidation
 			//fixedName = initialName.replaceAll(charsToRemove[i], " ");
 
 		//}
-		 String fixedName = initialName.replaceAll("[?]", " ");
-		 String fixedSC = screenName.replaceAll("[?]", " ");
+		  
+		 String fixedName = initialName.trim().replaceAll("[^a-zA-Z]\\s", " ");
+		 String fixedSC = screenName.trim().replaceAll("[^a-zA-Z]\\s", " ");
 
 		 if(fixedSC.contains(" "))
 		 {
@@ -273,16 +277,28 @@ public class NameValidation
 				// CALL GENDER VERIFICATION IN OTHER CLASS TO STRENGTHEN
 				// ARGUMENT OF WHETHER A PERSON IS MALE OR FEMALE
 				// BY LOOKING AT SEVERAL OF THEIR TWEET TEXTS.
-				result = -1;
-				System.out.println("NAME MATCHED IN BOTH FILES");
-
-			} else if (mMatch == false && fMatch == false)
-			{
-				if(userDesc.matches("(Husband|husband|Son|son|Dad|dad|Father|father|Uncle|uncle|Grandpa|grandpa|grandfatner|Grandfather)"))
+				if(stringContainsItemFromList(userDesc, maleDesc))
 				{
 					result = 1;
 				}
-				else if(userDesc.matches("(Mom|mom|Mother|mother|Daughter|daughter|Aunt|aunt|Grandma|grandma|Grandmother|grandmother|Wife|wife)"))
+				else if(stringContainsItemFromList(userDesc, femaleDesc))
+				{
+					result = 0;
+				}
+				else
+				{
+				result = -1;
+				System.out.println("NAME MATCHED IN BOTH FILES");
+				}
+
+			} else if (mMatch == false && fMatch == false)
+			{
+				
+				if(stringContainsItemFromList(userDesc, maleDesc))
+				{
+					result = 1;
+				}
+				else if(stringContainsItemFromList(userDesc, femaleDesc))
 				{
 					result = 0;
 				}
@@ -340,7 +356,14 @@ public class NameValidation
 		} catch (TwitterException e)
 		{
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			if(e.getStatusCode() == 404)
+			{
+				System.out.println("Client error");
+			}
+			else if(e.getStatusCode() == 503)
+			{
+				System.out.println("The Twitter Servers are up, but overloaded with requests. Try again later.");
+			}
 		}
 
 		Arrays.fill(tempArr, "");
@@ -352,10 +375,23 @@ public class NameValidation
 	
 	// A handy method to Split real names at camel casing if the user
 	// wrote something such as this; ChristopherPolini or christopherPolini.
-	static String splitCamelCase(String s)
+	public static String splitCamelCase(String s)
 	{
 		return s.replaceAll(String.format("%s|%s|%s",
 				"(?<=[A-Z])(?=[A-Z][a-z])", "(?<=[^A-Z])(?=[A-Z])",
 				"(?<=[A-Za-z])(?=[^A-Za-z])"), " ");
+	}
+	
+	//method to check if a string contains items from a given list.
+	public static boolean stringContainsItemFromList(String inputString, String[] items)
+	{
+	    for(int i =0; i < items.length; i++)
+	    {
+	        if(inputString.contains(items[i]))
+	        {
+	            return true;
+	        }
+	    }
+	    return false;
 	}
 }
