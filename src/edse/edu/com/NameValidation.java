@@ -1,9 +1,14 @@
-//Here we want to take each username from the list of type User and use the Twitter4J API to get the user's real name.
-//Once the real name has been obtained we can cross check it with both male and female common names and store the result
-//in a map or some other structure. Of course the name could be not found or may be in both files. If it is either of these two
-//cases further explanation will be needed. Also all the text of each user's tweets must be checked for gender classification.
-//We check all of their tweets so more text is available to analyze. Using both a real name and the text of a user's tweets,
-//a classification can be made whether or not they're male or female...
+/*
+ * Author: Justin Edse
+ * Title: NameValidation.java
+ * Purpose: Here we want to take each username from the list of type User and use the Twitter4J API to get the user's real name.
+ * Once the real name has been obtained we can cross check it with both male and female common names and store the result
+ * in a map or some other structure. Of course the name could be not found or may be in both files. If it is either of these two
+ * cases further explanation will be needed. Also all the text of each user's tweets must be checked for gender classification.
+ * We check all of their tweets so more text is available to analyze. Using both a real name and the text of a user's tweets,
+ * a classification can be made whether or not they are male or female.
+ * Date: August, September 2013
+ */
 package edse.edu.com;
 
 import java.io.BufferedReader;
@@ -31,10 +36,9 @@ public class NameValidation
 
 	// open the male and female text files to get ready for validation.
 	// iterate through the list of users, check each m and f file.
-	// check cases, call genderclassification for text class!!!!
+	// check cases, call genderclassification for text class.
 	static ConfigurationBuilder cb;
 	static Twitter twitter;
-	// ResponseList<twitter4j.User> returnUserInfoList;
 
 	static int q = 0;
 	static List<User> gblMovedUsers = new ArrayList<User>();
@@ -44,26 +48,49 @@ public class NameValidation
 
 	static BufferedReader readMale;
 	static BufferedReader readFemale;
-	
-	static String[] maleDesc = {"Boyfriend", "boyfriend","Husband","husband", "Father", "father", "Son", "son", "Uncle", "uncle", "Grandpa", "grandpa", "Grandfather", "grandfather", "Brother", "brother"};
-	static String[] femaleDesc = {"Girlfriend", "girlfriend","Mother", "mother", "Wife", "wife", "Aunt", "aunt", "Mother", "mother", "Sister", "sister", "Grandmother", "grandmother", "grandma", "Grandma"};
 
+	// Common keywords that may be used in a twitter profile description to set
+	// a woman and a man apart.
+	static String[] maleDesc = { "Boyfriend", "boyfriend", "Husband",
+			"husband", "Father", "father", "Son", "son", "Uncle", "uncle",
+			"Grandpa", "grandpa", "Grandfather", "grandfather", "Brother",
+			"brother" };
+	static String[] femaleDesc = { "Girlfriend", "girlfriend", "Mother",
+			"mother", "Wife", "wife", "Aunt", "aunt", "Mother", "mother",
+			"Sister", "sister", "Grandmother", "grandmother", "grandma",
+			"Grandma" };
+
+	/**
+	 * The first task method does is go through the movedUsers list and begins
+	 * to call the method, CallTwitterAPI. The way this has to be accomplished
+	 * is rather quirky but in order to get all of users real names found in
+	 * their profile information and not exceed the Twitter API rate limt is to
+	 * send/receive user information in increments of 100. Then once the real
+	 * names are returned method effectively goes through the twitter users in
+	 * the list movedUsers and opens two text files containing thousands of male
+	 * and female common first names from 1960 - 2010 (Thank you to InfoChimps
+	 * for this data).
+	 * 
+	 * The any matches of names in the text file and the real user are kept
+	 * track of. During this process the user's profile is also looked at
+	 * briefly.
+	 * 
+	 * @param movedUsers
+	 * @throws IOException
+	 */
 	public static void check_name(List<User> movedUsers) throws IOException
 	{
-		// consumer key, consumer secret, etc.
+		// consumer key, consumer secret, access token, and access token secret.
+		// These are required in order
+		// to successfully use the Twitter4j API.
 		cb = new ConfigurationBuilder();
 		cb.setOAuthConsumerKey("Nfqi3CStffNi7TJMyZQhw");
 		cb.setOAuthConsumerSecret("m6RFWLgQx9CvHzmJteEX5F21s3iOdmO4pUqjiO4K5D4");
 		cb.setOAuthAccessToken("416099988-KC0pUGgQ9ATx85FkGywXQHrtdCUNlf9X3DCM91HW");
 		cb.setOAuthAccessTokenSecret("CUjqMeykmPjMz1UEjQx2wXZRqrKvwuAUfn9Lhh9qMlc");
 
-		// TWITTER OBJECT STARTS HERE. NEED TO FIGURE OUT RATE LIMIT EXCEEDED
-		// LISTENER.
 		twitter = new TwitterFactory(cb.build()).getInstance();
 		ArrayList<twitter4j.User> returnUserInfoList = new ArrayList<twitter4j.User>();
-
-		// lineInFemale = null;
-		// fullName = null;
 
 		Map<twitter4j.User, Integer> MFMap = new HashMap<twitter4j.User, Integer>();
 
@@ -71,9 +98,14 @@ public class NameValidation
 		{
 
 			System.out.println("male" + readMale + " " + readFemale);
-			// CHECKING WHETHER OR NOT EACH USERNAME STILL HAS A VALID TWITTER
-			// ACCOUNT
 
+			// Doing this pre step of calling the Twitter4j API is a handy way
+			// of checking whether or not
+			// the user from the CSV file still has an account by that same
+			// profile/user name. If it turns
+			// out the user doesn't have the account anymore and no further info
+			// can be gleamed from them
+			// then that user is removed from the list.
 			Iterator<User> it = movedUsers.iterator();
 
 			while (it.hasNext())
@@ -95,15 +127,15 @@ public class NameValidation
 
 				}
 			}
-			System.out.println(movedUsers.size());
+
+			// Here the needed number of API calls in increments of 100 need to
+			// be figured out.
 			gblMovedUsers = movedUsers;
 			int callsToDo = movedUsers.size();
 			int numToDo = (((callsToDo + 99) / 100) * 100) / 100;
 
-			System.out.println("CALLS TO DO ARE " + numToDo);
 			int k = 0;
 			int keepTrackSizeOfUsers = 0;
-			// movedUsers.size();
 
 			while (k < numToDo)
 			{
@@ -122,8 +154,6 @@ public class NameValidation
 			// start to get a gauge on whether this person might be male or
 			// female.
 
-			System.out.println("\n\n HEY  user list size is" + returnUserInfoList.size());
-
 			int c = 0;
 			int p = 0;
 			ArrayList<String> bothFiles = new ArrayList<>();
@@ -141,37 +171,36 @@ public class NameValidation
 				String checkScreenName = tuser.getScreenName();
 				String userDesc = tuser.getDescription();
 				System.out.println(realName);
-				int result = NameValidation.CheckGenderByFile(realName, checkScreenName, userDesc);
-				
-				if(result == -1)
+				int result = NameValidation.CheckGenderByFile(realName,
+						checkScreenName, userDesc);
+
+				if (result == -1)
 				{
 					p++;
 					bothFiles.add(realName);
-				}
-				else if(result == -2)
+				} else if (result == -2)
 				{
 					c++;
-					
+
 				}
-				if(result == -1 || result == 1 || result == 0 || result == -2){
-				MFMap.put(tuser, result);}
-				
-				
+				if (result == -1 || result == 1 || result == 0 || result == -2)
+				{
+					MFMap.put(tuser, result);
+				}
 
 				// CALL GENDER CLASSIFICATION CLASS TO FURTHER CONFIRM WHETHER
-				// OR NOT
-				// THE RESULT PARAMETER OF A 0 OR A 1 WAS CORRECT.
-				System.out.println("AT PROBABILITY\n" + MFMap.size());
-				
-				
+				// OR NOT THE RESULT PARAMETER OF A 0 OR A 1 WAS CORRECT.
 
 			}
-			System.out.println("in both files \n" + p);
-			System.out.println(bothFiles);
-			System.out.println("in neither fields " + c);
-			System.out.println("INNAMEVALIDATION BEFOE CALL TO GENDERCLASSIFICATION!!! " + MFMap.size() + "\t" + gblMovedUsers.size() + "\t\n " + q);
-			GenderClassification.CheckGender(MFMap,
-						gblMovedUsers);
+			/*
+			 * System.out.println("in both files \n" + p);
+			 * System.out.println(bothFiles);
+			 * System.out.println("in neither fields " + c); System.out
+			 * .println(
+			 * "INNAMEVALIDATION BEFOE CALL TO GENDERCLASSIFICATION!!! " +
+			 * MFMap.size() + "\t" + gblMovedUsers.size() + "\t\n " + q);
+			 */
+			GenderClassification.CheckGender(MFMap, gblMovedUsers);
 			// closing male and female buffers here.
 			readMale.close();
 			readFemale.close();
@@ -181,46 +210,61 @@ public class NameValidation
 		}
 	}
 
-	public static int CheckGenderByFile(String initialName, String screenName, String userDesc) throws IOException
+	/**
+	 * This method compared the user's real name with any matches in either the
+	 * male or female text files. It also checks to see if their screen name
+	 * matches anything from the text file or if their profile description
+	 * contains hint keywords as to whether they are male or female.
+	 * 
+	 * @param initialName
+	 *            This parameter is used for cleaning up the string with regex
+	 * @param screenName
+	 *            The user's screen name
+	 * @param userDesc
+	 *            The user's profile description
+	 * @return the result of whether they were male, female, in both files, or
+	 *         not found in either of the files.
+	 * @throws IOException
+	 *             This is to catch any IO problems that may happen when reading
+	 *             the two names text files.
+	 */
+	public static int CheckGenderByFile(String initialName, String screenName,
+			String userDesc) throws IOException
 	{
 
-		
+		// setup variables for assigning whether a match in a male or female
+		// file took place.
 		int result = 0;
 		boolean mMatch = false;
 		boolean fMatch = false;
 		String realName = null;
 		String realScreenName = null;
-		
+
 		String nameFromFile = null;
 
-		// array with characters to remove from real name provided.
-		//String[] charsToRemove = new String[3];
-		//charsToRemove[0] = "?";
-		//charsToRemove[1] = "@";
-		//charsToRemove[2] = ".";
-		//String fixedName = initialName;
-		//for (int i = 0; i < charsToRemove.length; i++)
-		//{
-			//fixedName = initialName.replaceAll(charsToRemove[i], " ");
+		// Using regex here to split the user's screen name at a capital letter
+		// and
+		// get their first name
+		String fixedName = initialName.trim().replaceAll("[^a-zA-Z]\\s", " ");
+		String fixedSC = screenName.trim().replaceAll("[^a-zA-Z]\\s", " ");
 
-		//}
-		  
-		 String fixedName = initialName.trim().replaceAll("[^a-zA-Z]\\s", " ");
-		 String fixedSC = screenName.trim().replaceAll("[^a-zA-Z]\\s", " ");
+		// more regex cleanup, checking if screen name contains a change from
+		// lower case to upper case letters such as willBrown. If not then this
+		// also
+		// checks if the screen name contains a space separating a first and
+		// last name.
+		if (fixedSC.contains(" "))
+		{
 
-		 if(fixedSC.contains(" "))
-		 {
-			
-				String scArr[] = fixedSC.split(" ");
-				realScreenName = scArr[0];
-		 }
-		 else
-		 {
-				String realSCSplit = NameValidation.splitCamelCase(fixedSC);
-				String endSC[] = realSCSplit.split(" ");
-				realScreenName = endSC[0];
-		 }
-		 
+			String scArr[] = fixedSC.split(" ");
+			realScreenName = scArr[0];
+		} else
+		{
+			String realSCSplit = NameValidation.splitCamelCase(fixedSC);
+			String endSC[] = realSCSplit.split(" ");
+			realScreenName = endSC[0];
+		}
+
 		if (fixedName.contains(" "))
 		{
 			String nameArr[] = fixedName.split(" ");
@@ -234,15 +278,18 @@ public class NameValidation
 
 		try
 		{
+			// reading in the text from the files...
 			while ((lineInMale = readMale.readLine()) != null)
 			{
 				String lowerM = lineInMale.toLowerCase();
-				if (realName.equalsIgnoreCase(lineInMale) || (realScreenName.toLowerCase().equalsIgnoreCase(lowerM)))
+				if (realName.equalsIgnoreCase(lineInMale)
+						|| (realScreenName.toLowerCase()
+								.equalsIgnoreCase(lowerM)))
 				{
-					
+
 					mMatch = true;
 					System.out.println("MALE MATCH DETECTED");
-					
+
 					break;
 				}
 
@@ -251,12 +298,13 @@ public class NameValidation
 			while ((lineInFemale = readFemale.readLine()) != null)
 			{
 				String lower = lineInFemale.toLowerCase();
-				if ((realName.equalsIgnoreCase(lineInFemale) || (realScreenName.toLowerCase().equalsIgnoreCase(lower))))
+				if ((realName.equalsIgnoreCase(lineInFemale) || (realScreenName
+						.toLowerCase().equalsIgnoreCase(lower))))
 				{
-					
+
 					fMatch = true;
 					System.out.println("FEMALE MATCH DETECTED");
-					
+
 					break;
 				}
 			}
@@ -273,39 +321,33 @@ public class NameValidation
 				System.out.println("MALE");
 			} else if (mMatch == true && fMatch == true)
 			{
-				// don't know....by name.
-				// CALL GENDER VERIFICATION IN OTHER CLASS TO STRENGTHEN
-				// ARGUMENT OF WHETHER A PERSON IS MALE OR FEMALE
-				// BY LOOKING AT SEVERAL OF THEIR TWEET TEXTS.
-				if(stringContainsItemFromList(userDesc, maleDesc))
+				// don't exactly know by name so also use the profile
+				// description.
+				if (stringContainsItemFromList(userDesc, maleDesc))
 				{
 					result = 1;
-				}
-				else if(stringContainsItemFromList(userDesc, femaleDesc))
+				} else if (stringContainsItemFromList(userDesc, femaleDesc))
 				{
 					result = 0;
-				}
-				else
+				} else
 				{
-				result = -1;
-				System.out.println("NAME MATCHED IN BOTH FILES");
+					result = -1;
+					System.out.println("NAME MATCHED IN BOTH FILES");
 				}
 
 			} else if (mMatch == false && fMatch == false)
 			{
-				
-				if(stringContainsItemFromList(userDesc, maleDesc))
+
+				if (stringContainsItemFromList(userDesc, maleDesc))
 				{
 					result = 1;
-				}
-				else if(stringContainsItemFromList(userDesc, femaleDesc))
+				} else if (stringContainsItemFromList(userDesc, femaleDesc))
 				{
 					result = 0;
-				}
-				else 
+				} else
 				{
-				result = -2;
-				System.out.println("NO NAME MATCH IN EITHER FILE");
+					result = -2;
+					System.out.println("NO NAME MATCH IN EITHER FILE");
 				}
 			}
 
@@ -314,16 +356,32 @@ public class NameValidation
 
 			ioe.printStackTrace();
 		}
-		
-	
 
 		return result;
 	}
 
+	/**
+	 * This method is the one that calls the Twitter API and increments of 100
+	 * and gets back a bundle of information about each user. This information
+	 * is representing by the twitter4j.User object. It contains a slew of info
+	 * such as real name, profile picture url, number of followers, number
+	 * followed, and a ton of other useful things.
+	 * 
+	 * @param keepTrackSize
+	 *            This variable keeps track of how many API calls are left in
+	 *            relation to the number of users in the list (ie. for 600 users
+	 *            it would take 6 calls). This is a great way to avoid exceeding
+	 *            the Twitter rate limit and getting into further complications
+	 *            dealing with your twitter application settings.
+	 * @return This returns a response list of twitter4j.User objects.
+	 */
 	public static ResponseList<twitter4j.User> CallTwitterAPI(int keepTrackSize)
 	{
 
-		System.out.println(keepTrackSize);
+		// Needing to setup an array since the Twitter4j method lookUpUsers only
+		// takes
+		// an array type and not ArrayList.
+
 		String[] tempArr = new String[100];
 		ResponseList<twitter4j.User> tempList = null;
 		int startPosition = 0;
@@ -349,20 +407,19 @@ public class NameValidation
 		try
 		{
 			// returning value into tempList.
-			System.out.println(tempArr.length);
-
+			// Also need to watch out for any network errors which may occur
+			// here.
 			tempList = twitter.lookupUsers(tempArr);
-			System.out.println("size to call api with " + tempList.size());
 		} catch (TwitterException e)
 		{
 			// TODO Auto-generated catch block
-			if(e.getStatusCode() == 404)
+			if (e.getStatusCode() == 404)
 			{
 				System.out.println("Client error");
-			}
-			else if(e.getStatusCode() == 503)
+			} else if (e.getStatusCode() == 503)
 			{
-				System.out.println("The Twitter Servers are up, but overloaded with requests. Try again later.");
+				System.out
+						.println("The Twitter Servers are up, but overloaded with requests. Try again later.");
 			}
 		}
 
@@ -372,26 +429,42 @@ public class NameValidation
 
 	}
 
-	
-	// A handy method to Split real names at camel casing if the user
-	// wrote something such as this; ChristopherPolini or christopherPolini.
+	/**
+	 * A handy method to Split real names at camel casing if the user wrote
+	 * something such as this; ChristopherPolini or christopherPolini.
+	 * 
+	 * @param This
+	 *            parameter represents the users screen name or real name
+	 * @return a formatted String
+	 */
 	public static String splitCamelCase(String s)
 	{
 		return s.replaceAll(String.format("%s|%s|%s",
 				"(?<=[A-Z])(?=[A-Z][a-z])", "(?<=[^A-Z])(?=[A-Z])",
 				"(?<=[A-Za-z])(?=[^A-Za-z])"), " ");
 	}
-	
-	//method to check if a string contains items from a given list.
-	public static boolean stringContainsItemFromList(String inputString, String[] items)
+
+	/**
+	 * Checks to see if the profile description contains any of the male or
+	 * female keywords mention above at the top of the class.
+	 * 
+	 * @param inputString
+	 *            the user's profile description string
+	 * @param items
+	 *            The array of keywords to check against.
+	 * @return This returns a boolean value as to whether or not a keyword was
+	 *         found.
+	 */
+	public static boolean stringContainsItemFromList(String inputString,
+			String[] items)
 	{
-	    for(int i =0; i < items.length; i++)
-	    {
-	        if(inputString.contains(items[i]))
-	        {
-	            return true;
-	        }
-	    }
-	    return false;
+		for (int i = 0; i < items.length; i++)
+		{
+			if (inputString.contains(items[i]))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 }

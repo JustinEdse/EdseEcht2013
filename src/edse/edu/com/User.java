@@ -1,3 +1,11 @@
+/*
+ * Author(s): Haochi Chen, modified by Justin Edse
+ * Title: User.java
+ * Purpose: This class provides a basis for a tweet and the information that it contains.
+ * This is very handy when reading in the twitter data from the CSV file.
+ * Dates: September 2012, July 2013
+ */
+
 package edse.edu.com;
 
 import java.util.List;

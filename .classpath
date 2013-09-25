@@ -21,5 +21,7 @@
 	<classpathentry kind="lib" path="C:/Users/edse4_000/Downloads/poi-bin-3.9-20121203/poi-3.9/lib/commons-codec-1.5.jar"/>
 	<classpathentry kind="lib" path="C:/Program Files (x86)/Weka-3-6/weka.jar"/>
 	<classpathentry kind="lib" path="C:/Users/edse4_000/Downloads/weka-dev-3.7.5-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/edse4_000/Downloads/google-gson-2.2.4-release/google-gson-2.2.4/gson-2.2.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/edse4_000/Downloads/guava-15.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
