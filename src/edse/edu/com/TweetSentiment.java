@@ -1,3 +1,11 @@
+/*
+ * Author: Justin Edse
+ * Title: TweetSentiment.java
+ * Purpose: Here we want to take each user from the male and female array lists, give their texts to the ViralHeat via HTTP and
+ * then get back the result as to whether their tweet text was positive or negative.
+ * Date: September 2013
+ */
+
 package edse.edu.com;
 
 
@@ -14,8 +22,13 @@ import com.google.gson.Gson;
 
 public class TweetSentiment
 {
-	private final static String VIRALHEAT_KEY = "Te49jExsy72pQyub1xG"; // 5000 Calls
+	// The viral heat API key, 5000 calls a day are allowed.
+	private final static String VIRALHEAT_KEY = "Te49jExsy72pQyub1xG"; 
 
+	//static variables for keeping track of positive and negative tweets. In addition a small number of tweets returned null from 
+	//viral heat so I incremented those into the two unknownM and unknownF variables. This way the program will keep running,
+	//provide meaningful feedback, and not crash.
+	
 	static int malePositive = 0;
 	static int maleNegative = 0;
 	static int femalePositive = 0;
@@ -23,11 +36,20 @@ public class TweetSentiment
 	static int unknownM = 0;
 	static int unknownF = 0;
 	
+	/**
+	 * The empty default constructor of the class.
+	 */
 	public TweetSentiment()
 	{
 		
 	}
 	
+	/**
+	 * This method just gets back the positive or negative results for the M/F tweet text and increments
+	 * the correct integer value. 
+	 * @param mUsers the list collection of male users
+	 * @param fUsers the list collection of female users
+	 */
 	public static void DetermineSentiment(Collection<edse.edu.com.User> mUsers, Collection<edse.edu.com.User> fUsers)
 	{
 		
@@ -36,6 +58,7 @@ public class TweetSentiment
 		{
 			List<Tweet> tweets = male.getTweets();
 			
+			// going through the list of male users and calling the function to deal with the viral heat API.
 			for(Tweet t : tweets)
 			{
 				try
@@ -67,6 +90,7 @@ public class TweetSentiment
 			}
 		}
 		
+		// going through the female user list and calling the function to get the tweet sentiment for each text
 		for(User female : fUsers)
 		{
 			List<Tweet> tweets = female.getTweets();
@@ -99,14 +123,14 @@ public class TweetSentiment
 				}
 		}
 		}
-		
-	System.out.println("FINAL INTEGER VALUES\n");
-	System.out.println(malePositive + "\n");
-	System.out.println(maleNegative + "\n");
-	System.out.println(femalePositive + "\n");
-	System.out.println(femaleNegative + "\n");
-	System.out.println(unknownM + "\n");
-	System.out.println(unknownF + "\n");
+	
+	// These are the final print out values for the positive, negative, and unknown tweets
+	System.out.println("=========================FINAL INTEGER VALUES==============================\n");
+	System.out.println("===============Number of positive male tweets: " + malePositive + "===============\n");
+	System.out.println("===============Number of negative male tweets: " + maleNegative + "===============\n");
+	System.out.println("===============Number of positive female tweets: " + femalePositive + "===============\n");
+	System.out.println("===============Number of negative female tweets: " + femaleNegative + "===============\n");
+
 		
 	}
 	
@@ -126,27 +150,25 @@ public class TweetSentiment
 			            	 togetherString.append(concat);
 			             }
 			            
+			             // string passed to viral heat must be URI encoded and have the string being
+			             // the test must have a limit of roughly 300 characters.
 			                String finalString = togetherString.toString();
 							finalString = finalString.substring(0, Math.min(finalString.length(), 300));
 			             
 			             String url = "https://www.viralheat.com/api/sentiment/review.json?api_key="
 			                     + VIRALHEAT_KEY + "&text=" + finalString;
 			             String jsonTxt = NetUtil.httpGet(url);
-			             // String jsonTxt =
-			             // "{\"prob\":0.806548944920931,\"mood\":\"positive\",\"text\":\"happy\"}";
-			             //		System.out.println("jsonTxt:  " + jsonTxt);
+			        
 			             @SuppressWarnings("rawtypes")
 						Map jsonJavaRootObject = new Gson().fromJson(jsonTxt, Map.class);
 			             
-			            // UserResponse textInfo = new Gson().fromJson(jsonTxt, UserResponse.class);
-			             //Object me = new Gson().fromJson(jsonTxt, Object.class);
+			         
 			             
-			            // System.out.println(textInfo.toString());
-			             //System.out.println(textInfo.getProb());
-			             //System.out.println(me.toString());
-			             System.out.println(jsonJavaRootObject);
+			         
+			             //System.out.println(jsonJavaRootObject);
+			          
 			             String mood = null;
-			             //double prob = (double) jsonJavaRootObject.get("prob");
+			        
 			             if(jsonJavaRootObject != null)
 			             {
 			             mood = (String) jsonJavaRootObject.get("mood");
@@ -155,8 +177,8 @@ public class TweetSentiment
 			             {
 			            	 mood = "unknown";
 			             }
-			             //System.out.println(prob);
-			             
+			           
+			             System.out.println("============Tweet Computed was " + mood + " =====================");
 			             return mood;
 	 }
 }
