@@ -51,6 +51,7 @@ public class GenderClassification
 			List<edse.edu.com.User> movedUsers)
 	{
 
+		System.out.println(userMap.size());
 		List<Map<twitter4j.User, Integer>> unknownUserList = new ArrayList<>();
 
 		Map<twitter4j.User, Integer> unknown = new HashMap<>();
@@ -80,9 +81,9 @@ public class GenderClassification
 
 		}
 
-		// System.out.println("UNKNOWN USER LIST " + unknownUserList.size());
-		// System.out.println("maleLIST " + maleList.size());
-		// System.out.println("femaleLIST " + femaleList.size());
+		 System.out.println("UNKNOWN USER LIST " + unknownUserList.size());
+		System.out.println("maleLIST " + maleList.size());
+		System.out.println("femaleLIST " + femaleList.size());
 
 		// GenderClassification convert = new GenderClassification();
 
@@ -238,8 +239,15 @@ public class GenderClassification
 		// Calling the tweet sentiment class to figure out the emotion behind
 		// male and
 		// female user text.
-		TweetSentiment.DetermineSentiment(mUsers, fUsers);
-
+		//TweetSentiment.DetermineSentiment(mUsers, fUsers);
+		
+		//build the word frequencies and total frequencies.
+		TweetSentiment.CommonWordFrequency(fUsers, false, "FEMALE");
+		TweetSentiment.CommonWordFrequency(mUsers, false, "MALE");
+		
+		//print the results to the two files.
+		TweetSentiment.CommonWordFrequency(mUsers, true, "MALE");
+		TweetSentiment.CommonWordFrequency(fUsers, true, "FEMALE");
 	}
 
 	/**

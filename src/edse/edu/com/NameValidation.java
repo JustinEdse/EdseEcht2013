@@ -51,14 +51,14 @@ public class NameValidation
 
 	// Common keywords that may be used in a twitter profile description to set
 	// a woman and a man apart.
-	static String[] maleDesc = { "Boyfriend", "boyfriend", "Husband",
-			"husband", "Father", "father", "Son", "son", "Uncle", "uncle",
-			"Grandpa", "grandpa", "Grandfather", "grandfather", "Brother",
-			"brother" };
-	static String[] femaleDesc = { "Girlfriend", "girlfriend", "Mother",
-			"mother", "Wife", "wife", "Aunt", "aunt", "Mother", "mother",
-			"Sister", "sister", "Grandmother", "grandmother", "grandma",
-			"Grandma" };
+	static String[] maleDesc = { " Boyfriend ", " boyfriend ", " Husband ",
+			" husband ", " Father ", " father ", " Son ", " son ", " Uncle ", " uncle ",
+			" Grandpa ", " grandpa ", " Grandfather ", " grandfather ", " Brother ",
+			" brother " };
+	static String[] femaleDesc = { " Girlfriend ", " girlfriend ", "Mother ",
+			" mother", " Wife ", " wife ", " Aunt ", " aunt ", " Mother ", " mother ",
+			" Sister", " sister ", " Grandmother ", " grandmother ", " grandma ",
+			" Grandma " };
 
 	/**
 	 * The first task method does is go through the movedUsers list and begins
@@ -107,7 +107,7 @@ public class NameValidation
 			// can be gleamed from them
 			// then that user is removed from the list.
 			Iterator<User> it = movedUsers.iterator();
-
+/*
 			while (it.hasNext())
 			{
 
@@ -127,13 +127,13 @@ public class NameValidation
 
 				}
 			}
-
+*/
 			// Here the needed number of API calls in increments of 100 need to
 			// be figured out.
 			gblMovedUsers = movedUsers;
 			int callsToDo = movedUsers.size();
 			int numToDo = (((callsToDo + 99) / 100) * 100) / 100;
-
+            System.out.println("NUM TO DO CORRECT " + numToDo);
 			int k = 0;
 			int keepTrackSizeOfUsers = 0;
 
@@ -146,6 +146,20 @@ public class NameValidation
 				k++;
 				System.out.println("this is k " + k);
 				keepTrackSizeOfUsers += 100;
+				
+				if(keepTrackSizeOfUsers == 17000 || keepTrackSizeOfUsers == 35000 || keepTrackSizeOfUsers == 53000 ||
+						 keepTrackSizeOfUsers == 71000)
+				{
+					try
+					{
+						Thread.sleep(840*1000);
+						
+					}
+					catch(InterruptedException e)
+					{
+						e.printStackTrace();
+					}
+				}
 
 			}
 
@@ -410,6 +424,7 @@ public class NameValidation
 			// Also need to watch out for any network errors which may occur
 			// here.
 			tempList = twitter.lookupUsers(tempArr);
+			System.out.println("SIZE OF TEMP LIST GOT: " + tempList.size());
 		} catch (TwitterException e)
 		{
 			// TODO Auto-generated catch block

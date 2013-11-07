@@ -158,8 +158,9 @@ public class FilteredClassifier
 	/**
 	 * This method performs the classification of the instance. Output is done
 	 * at the command-line.
+	 * @throws Exception 
 	 */
-	public String classify()
+	public String classify() throws Exception
 	{
 		double pred = 0.0;
 		try
@@ -173,8 +174,15 @@ public class FilteredClassifier
 			System.out.println("Problem found when classifying the text");
 		}
 
+		double[] preds = classifier.distributionForInstance(instances.instance(0));
+		
+		for(int i = 0; i < instances.instance(0).classAttribute().numValues(); i++)
+		{
+			System.out.println("Probablity for label " + instances.instance(0).classAttribute().value(i) + " = " + preds[i]);
+		}
+		
 		return instances.classAttribute().value((int) pred);
-
+        
 	}
 
 	/**
@@ -199,7 +207,14 @@ public class FilteredClassifier
 
 		classifier.makeInstance(uName, uScrn, desc, newText);
 
-		result = classifier.classify();
+		try
+		{
+			result = classifier.classify();
+		} catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		// Here the String result of MALE or FEMALE is returned to the
 		// GenderClassification.java class.
