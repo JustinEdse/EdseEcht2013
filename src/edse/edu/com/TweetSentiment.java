@@ -42,6 +42,7 @@ public class TweetSentiment
 	static Map<String, Integer> wordFreqMale = new HashMap<>();
 	static Map<String, Integer> wordFreqFemale = new HashMap<>();
 	static Map<String, Integer> totalFreq = new HashMap<>();
+	static int countPrinted = 0;
 
 	/**
 	 * The empty default constructor of the class.
@@ -149,12 +150,14 @@ public class TweetSentiment
 	}
 
 	public static void CommonWordFrequency(Collection<edse.edu.com.User> users,
-			boolean readyPrint, String which)
+			boolean readyPrint, String which) throws IOException
 	{
 		// get frequency of words used by females.
 		// layout is equal to K = word, V = occurrence
 		
 		BufferedWriter writer = null;
+		boolean finished = false;
+		
 
 		if (readyPrint == false)
 		{
@@ -208,6 +211,7 @@ public class TweetSentiment
 
 		if (readyPrint == true)
 		{
+			countPrinted++;
 			// Here I am just trying to shorten the code up and not have to
 			// worry about
 			// whether a male or female map is being dealt with. Just assign the
@@ -248,14 +252,77 @@ public class TweetSentiment
 
 				writer.flush();
 				writer.close();
-			} catch (IOException e)
+				
+				if(countPrinted ==2 ) {finished = true;}
+				
+			}
+			catch (IOException e)
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
+			if(finished == true && countPrinted == 2)
+			{
+				TweetSentiment.MaleFemaleComboData(wordFreqMale, wordFreqFemale, totalFreq);
+			}
 		}
+		
+		
 	}
 
+	
+	
+	
+	public static void MaleFemaleComboData(Map<String,Integer> mMap, Map<String,Integer> fMap, Map<String,Integer> totalF) throws IOException
+	{
+		BufferedWriter out = null;
+		try
+		{
+			out = new BufferedWriter(new FileWriter("C://combinedGender.txt"));
+		} catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		int fValue = 0;
+		int mValue = 0;
+		for(Map.Entry<String, Integer> total :totalF.entrySet())
+		{
+		
+			
+			//fValue = mMap.get(total.getKey());
+			//mValue = fMap.get(total.getKey());
+			
+			if(!fMap.containsKey(total.getKey()))
+			{
+				fValue = 0;
+			}
+			else
+			{
+				fValue = fMap.get(total.getKey());
+			}
+			
+			if(!mMap.containsKey(total.getKey()))
+			{
+				mValue = 0;
+			}
+			else
+			{
+				mValue = mMap.get(total.getKey());
+			}
+			
+			
+			out.write(total.getKey() + "\t" + mValue + "\t" + fValue);
+			out.newLine();
+			
+		}
+		
+	   out.flush();
+	   out.close();
+	}
 	public static String textSentiment(String tweet) throws IOException
 	{
 

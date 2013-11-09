@@ -46,9 +46,10 @@ public class GenderClassification
 	 * @param movedUsers
 	 *            This list is needed to keep track of the original size of
 	 *            users.
+	 * @throws IOException 
 	 */
 	public static void CheckGender(Map<twitter4j.User, Integer> userMap,
-			List<edse.edu.com.User> movedUsers)
+			List<edse.edu.com.User> movedUsers) throws IOException
 	{
 
 		System.out.println(userMap.size());
@@ -115,9 +116,10 @@ public class GenderClassification
 	 *            Map of the unknown users and their -1 or -2 value.
 	 * @param movedUsers
 	 *            To keep track of original user size.
+	 * @throws IOException 
 	 */
 	public static void CheckUnknowns(Map<twitter4j.User, Integer> unknownMap,
-			List<edse.edu.com.User> movedUsers)
+			List<edse.edu.com.User> movedUsers) throws IOException
 	{
 		StringBuffer tweetText = new StringBuffer();
 
