@@ -170,9 +170,9 @@ public class TweetSentiment
 					String twText = tweet.getTweet_text();
 					
 					//String filteredTweet = twText.replaceAll("\\s[0-9]+\\s", " ");
-					String filterOutUserName = twText.replaceAll("@[A-Za-z0-9_]+\\s{1}", "");
+					//String filterOutUserName = twText.replaceAll("@[A-Za-z0-9_]+\\s{1}", "");
 			
-					String[] wordArray = filterOutUserName.split(" ");
+					String[] wordArray = twText.split(" ");
 					for (String word : wordArray)
 					{
 						if (which.equals("MALE"))

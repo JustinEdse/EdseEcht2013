@@ -141,14 +141,17 @@ public class NameValidation
 			{
 				System.out.println("in loop");
 				ResponseList<twitter4j.User> initialReturn = CallTwitterAPI(keepTrackSizeOfUsers);
+				
+				if(initialReturn != null){
 				returnUserInfoList.addAll(initialReturn);
-
+				}
+				
+				
 				k++;
 				System.out.println("this is k " + k);
 				keepTrackSizeOfUsers += 100;
 				
-				if(keepTrackSizeOfUsers == 17000 || keepTrackSizeOfUsers == 35000 || keepTrackSizeOfUsers == 53000 ||
-						 keepTrackSizeOfUsers == 71000)
+				if(keepTrackSizeOfUsers % 18000 == 0)
 				{
 					try
 					{

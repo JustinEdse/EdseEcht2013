@@ -50,14 +50,7 @@ public class User
 	}
 	
 	
-	public int getMovement()
-	{
-		return this.movement;
-	}
-	public void setMovement(int towardsOrAway)
-	{
-		this.movement = towardsOrAway;
-	}
+	
 	public String getUserName()
 	{
 		return this.username;
@@ -86,19 +79,6 @@ public class User
 		return moved;
 	}
 */
-	public static double greatCircle(double lat1, double lng1, double lat2, double lng2)
-	{
-		// aka checking distance between two points
-		double earthRadius = 3958.75;
-	    double dLat = Math.toRadians(lat2-lat1);
-	    double dLng = Math.toRadians(lng2-lng1);
-	    double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-	               Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
-	               Math.sin(dLng/2) * Math.sin(dLng/2);
-	    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-	    double dist = earthRadius * c;
-	    return dist;
-	}
 	
 	public static List<User> tweetsToUsers(List<Tweet> tweets)
 	{

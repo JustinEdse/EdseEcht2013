@@ -202,7 +202,7 @@ public class FilteredClassifier
 		// file and then loading
 		// the saved model that was produced during the learning phase.
 		classifier = new FilteredClassifier();
-		classifier.load("C://Users//edse4_000//Desktop//usersnext.arff");
+		//classifier.load("C://Users//edse4_000//Desktop//usersnext.arff");
 		classifier.loadModel("C://outgend.model");
 
 		classifier.makeInstance(uName, uScrn, desc, newText);
