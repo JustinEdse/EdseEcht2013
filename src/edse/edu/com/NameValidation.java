@@ -40,7 +40,6 @@ public class NameValidation
 	static ConfigurationBuilder cb;
 	static Twitter twitter;
 
-	static int q = 0;
 	static List<User> gblMovedUsers = new ArrayList<User>();
 	static String lineInMale = "";
 	static String lineInFemale = "";
@@ -49,7 +48,7 @@ public class NameValidation
 	static BufferedReader readMale;
 	static BufferedReader readFemale;
 
-	// Common keywords that may be used in a twitter profile description to set
+	// Common keywords that may be used in a twitter profile description that may potentially set
 	// a woman and a man apart.
 	static String[] maleDesc = { " Boyfriend ", " boyfriend ", " Husband ",
 			" husband ", " Father ", " father ", " Son ", " son ", " Uncle ", " uncle ",
@@ -99,35 +98,6 @@ public class NameValidation
 
 			System.out.println("male" + readMale + " " + readFemale);
 
-			// Doing this pre step of calling the Twitter4j API is a handy way
-			// of checking whether or not
-			// the user from the CSV file still has an account by that same
-			// profile/user name. If it turns
-			// out the user doesn't have the account anymore and no further info
-			// can be gleamed from them
-			// then that user is removed from the list.
-			Iterator<User> it = movedUsers.iterator();
-/*
-			while (it.hasNext())
-			{
-
-				try
-				{
-					User u = it.next();
-					twitter4j.User receivedUser = twitter.showUser(u
-							.getUserName());
-
-				} catch (TwitterException te)
-				{
-					// all requests past 150 per hour return a 400 not a 404.
-					if (te.getStatusCode() == 404)
-					{
-						it.remove();
-					}
-
-				}
-			}
-*/
 			// Here the needed number of API calls in increments of 100 need to
 			// be figured out.
 			gblMovedUsers = movedUsers;
@@ -166,6 +136,8 @@ public class NameValidation
 
 			}
 
+			
+			List<twitter4j.User> finalFilteredList = NameValidation.filterCompanies(returnUserInfoList);
 			// Now I have each users real name registered from twitter in the
 			// returnUserInfoList. I can use this and the male/female file to
 			// start to get a gauge on whether this person might be male or
@@ -174,7 +146,7 @@ public class NameValidation
 			int c = 0;
 			int p = 0;
 			ArrayList<String> bothFiles = new ArrayList<>();
-			for (twitter4j.User tuser : returnUserInfoList)
+			for (twitter4j.User tuser : finalFilteredList)
 			{
 				// Need to reopen or establish the filereader each time
 				// a new user needs to be checked for male or female.
@@ -257,7 +229,7 @@ public class NameValidation
 		String realName = null;
 		String realScreenName = null;
 
-		String nameFromFile = null;
+		
 
 		// Using regex here to split the user's screen name at a capital letter
 		// and
@@ -315,8 +287,8 @@ public class NameValidation
 			while ((lineInFemale = readFemale.readLine()) != null)
 			{
 				String lower = lineInFemale.toLowerCase();
-				if ((realName.equalsIgnoreCase(lineInFemale) || (realScreenName
-						.toLowerCase().equalsIgnoreCase(lower))))
+				if (realName.equalsIgnoreCase(lineInFemale) || (realScreenName
+						.toLowerCase().equalsIgnoreCase(lower)))
 				{
 
 					fMatch = true;
@@ -485,4 +457,34 @@ public class NameValidation
 		}
 		return false;
 	}
+	
+	public static List<twitter4j.User> filterCompanies(List<twitter4j.User> users) throws IOException
+	{
+		//Go through the users list and check for usernames that belong to companies.
+		Iterator<twitter4j.User> it = users.iterator();
+		BufferedReader reader = null;
+		String readLine = "";
+		while(it.hasNext())
+	    {
+			
+			reader = new BufferedReader(new FileReader("C://companies.txt"));
+			twitter4j.User u = it.next();
+			
+		    while((readLine = reader.readLine()) != null)
+		    {
+				
+				if(u.getScreenName().equalsIgnoreCase(readLine))
+				{
+					it.remove();
+					break;
+				}
+			}
+			
+		 }
+
+		reader.close();
+		return users;
+	}
+	
+	
 }

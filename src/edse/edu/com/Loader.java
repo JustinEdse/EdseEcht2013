@@ -30,7 +30,6 @@ import java.util.Queue;
 import java.util.Set;
 import java.math.*;
 
-
 import org.supercsv.cellprocessor.ParseDate;
 import org.supercsv.cellprocessor.ParseDouble;
 import org.supercsv.cellprocessor.ParseInt;
@@ -41,9 +40,12 @@ import org.supercsv.io.CsvBeanReader;
 import org.supercsv.io.ICsvBeanReader;
 import org.supercsv.prefs.CsvPreference;
 
+import uk.ac.shef.wit.simmetrics.similaritymetrics.JaroWinkler;
+
+
 public class Loader
 {
-	
+
 	/**
 	 * @param args
 	 *            Standard String arguments for the main method
@@ -62,7 +64,8 @@ public class Loader
 		 * which brings in the csv file containing information such as user
 		 * name, their location, device, tweet text, and more.
 		 */
-		tweets = Loader.loadTweetsFromFile("C://Users//edse4_000//Desktop//safe latest//shared_with_Justin_copy//Games_tweet.txt");
+		tweets = Loader
+				.loadTweetsFromFile("C://Users//edse4_000//Desktop//safe latest//shared_with_Justin_copy//Phone_and_Tablet_tweet.txt");
 
 		/**
 		 * Assigning a list of users to the return value from the method
@@ -80,25 +83,22 @@ public class Loader
 
 		}
 
-		
-		
-
 		// for each loop to check and filter
 		// users who have tweeted a certain number of times.
 		System.out.println(users.size());
 		System.out.println(movedUsers.size());
 		int check = 0;
-		for(User u : users)
+		for (User u : users)
 		{
 			System.out.println(u.getUserName());
 			System.out.println(check);
 			check++;
-			
-			
+
 		}
-		
-		
-		NameValidation.check_name(movedUsers);
+
+		List<User> spamFilteredUsers = Loader.FilterSpamUsers(movedUsers);
+		System.out.println(spamFilteredUsers.size() + "NEW SIZE ADJUSTED!");
+		NameValidation.check_name(spamFilteredUsers);
 
 		// MOVED USERS IS WHAT WE WANT TO CHECK REAL NAMES FOR.
 		System.exit(0);
@@ -117,11 +117,10 @@ public class Loader
 		// To help manipulate SuperCSV I used this link:
 		// http://supercsv.sourceforge.net/examples_reading.html
 
-		final CellProcessor[] processors = new CellProcessor[] 
-				{ 
+		final CellProcessor[] processors = new CellProcessor[] {
 				new ParseInt(), // string sender_id
 				new NotNull(), // string screen_name
-				new NotNull()// tweet_text
+				new NotNull() // tweet_text
 
 		};
 
@@ -143,7 +142,6 @@ public class Loader
 
 		List<Tweet> tweets = new ArrayList<Tweet>();
 
-
 		try
 		{
 			beanReader = new CsvBeanReader(new FileReader(path),
@@ -151,11 +149,9 @@ public class Loader
 
 			// header elements at the top of the csv file. Those need to be
 			// accounted for.
-			final String[] header = {"sender_id", "screen_name",
-					"tweet_text"};
+			final String[] header = { "sender_id", "screen_name", "tweet_text" };
 			final CellProcessor[] processors = getProcessors();
 
-			
 			Tweet tweet = beanReader.read(Tweet.class, header, processors);
 			while (tweet != null)
 			{
@@ -225,16 +221,61 @@ public class Loader
 			Map.Entry pairs = (Map.Entry) iterator.next();
 			if (((ArrayList<Tweet>) pairs.getValue()).size() < 2)
 			{
-				//iterator.remove();
+				// iterator.remove();
 			}
 		}
 
 		return tweetsByUserName;
 	}
 
-	
-	
+	public static List<User> FilterSpamUsers(List<User> users)
+	{
 
-	
+		// The objective of this function is to filter out users whose twitter
+		// accounts
+		// are spammy in nature. In other words these accounts have very similar
+		// text
+		// in each of their tweets, usually dealing with some type of
+		// advertisement. They
+		// do not bring anything thing useful to this analysis so they should be
+		// removed.
+		float jaroStat = 0;
+		JaroWinkler algthm = new JaroWinkler();
+		int count = 0;
+         
+		for (Iterator<User> iterator = users.iterator(); iterator.hasNext();)
+		{
 
+			List<Tweet> listOfTweets = iterator.next().getTweets();
+
+			if (listOfTweets.size() >= 2)
+			{
+				for (int i = 0; i < listOfTweets.size(); i++)
+				{
+					for (int j = i + 1; j < listOfTweets.size(); j++)
+					{
+						String first = listOfTweets.get(i).getTweet_text();
+						String next = listOfTweets.get(j).getTweet_text();
+
+						jaroStat = algthm.getSimilarity(first, next);
+
+						if (jaroStat > .90)
+						{
+							count++;
+						}
+					}
+				}
+
+				if (count > 3)
+				{
+					iterator.remove();
+				}
+
+			}
+			
+			count = 0;
+
+		}
+		return users;
+	}
 }

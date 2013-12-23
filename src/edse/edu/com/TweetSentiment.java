@@ -21,6 +21,8 @@ import java.util.Map.Entry;
 
 import com.google.common.base.CharMatcher;
 import com.google.gson.Gson;
+import org.apache.commons.math3.*;
+
 
 public class TweetSentiment
 {
@@ -323,6 +325,8 @@ public class TweetSentiment
 	   out.flush();
 	   out.close();
 	}
+	
+	
 	public static String textSentiment(String tweet) throws IOException
 	{
 
