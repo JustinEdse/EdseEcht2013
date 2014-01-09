@@ -1,29 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="/Users/justinedse/Desktop/jars/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="/Users/justinedse/Desktop/jars/gson-2.2.4.jar"/>
+	<classpathentry kind="lib" path="/Users/justinedse/Desktop/jars/guava-15.0.jar"/>
+	<classpathentry kind="lib" path="/Users/justinedse/Desktop/jars/poi-3.9-20121203.jar"/>
+	<classpathentry kind="lib" path="/Users/justinedse/Desktop/jars/poi-excelant-3.9-20121203.jar"/>
+	<classpathentry kind="lib" path="/Users/justinedse/Desktop/jars/simmetrics_jar_v1_6_2_d07_02_07.jar"/>
+	<classpathentry kind="lib" path="/Users/justinedse/Desktop/jars/super-csv-2.0.1.jar"/>
+	<classpathentry kind="lib" path="/Users/justinedse/Desktop/jars/twitter4j-core-3.0.3.jar"/>
+	<classpathentry kind="lib" path="/Users/justinedse/Desktop/jars/weka-dev-3.7.5-sources.jar" sourcepath="/Users/justinedse/Desktop/jars/weka-dev-3.7.5-sources.jar"/>
+	<classpathentry kind="lib" path="/Users/justinedse/Desktop/jars/weka.jar" sourcepath="/Users/justinedse/Desktop/jars/weka.jar"/>
+	<classpathentry kind="lib" path="/Users/justinedse/Desktop/jars/xmlbeans-2.3.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-	<classpathentry kind="lib" path="C:/Users/edse4_000/Desktop/neededjars/super-csv-2.0.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/edse4_000/Desktop/neededjars/lucene-core-1.9.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/edse4_000/Desktop/neededjars/lucene-demos-1.9.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/edse4_000/Desktop/neededjars/lucene-analyzers-1.9.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/edse4_000/Desktop/neededjars/lucene-core-4.3.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/edse4_000/Desktop/neededjars/lucene-analyzers-common-4.3.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/edse4_000/Downloads/twitter4j-3.0.3/lib/twitter4j-core-3.0.3.jar"/>
-	<classpathentry kind="lib" path="C:/Users/edse4_000/Downloads/poi-bin-3.9-20121203/poi-3.9/poi-3.9-20121203.jar"/>
-	<classpathentry kind="lib" path="C:/Users/edse4_000/Downloads/poi-bin-3.9-20121203/poi-3.9/poi-examples-3.9-20121203.jar"/>
-	<classpathentry kind="lib" path="C:/Users/edse4_000/Downloads/poi-bin-3.9-20121203/poi-3.9/poi-excelant-3.9-20121203.jar"/>
-	<classpathentry kind="lib" path="C:/Users/edse4_000/Downloads/poi-bin-3.9-20121203/poi-3.9/poi-ooxml-3.9-20121203.jar"/>
-	<classpathentry kind="lib" path="C:/Users/edse4_000/Downloads/poi-bin-3.9-20121203/poi-3.9/poi-ooxml-schemas-3.9-20121203.jar"/>
-	<classpathentry kind="lib" path="C:/Users/edse4_000/Downloads/poi-bin-3.9-20121203/poi-3.9/poi-scratchpad-3.9-20121203.jar"/>
-	<classpathentry kind="lib" path="C:/Users/edse4_000/Downloads/poi-bin-3.9-20121203/poi-3.9/ooxml-lib/dom4j-1.6.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/edse4_000/Downloads/poi-bin-3.9-20121203/poi-3.9/ooxml-lib/stax-api-1.0.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/edse4_000/Downloads/poi-bin-3.9-20121203/poi-3.9/ooxml-lib/xmlbeans-2.3.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/edse4_000/Downloads/poi-bin-3.9-20121203/poi-3.9/lib/commons-codec-1.5.jar"/>
-	<classpathentry kind="lib" path="C:/Program Files (x86)/Weka-3-6/weka.jar"/>
-	<classpathentry kind="lib" path="C:/Users/edse4_000/Downloads/weka-dev-3.7.5-sources.jar"/>
-	<classpathentry kind="lib" path="C:/Users/edse4_000/Downloads/google-gson-2.2.4-release/google-gson-2.2.4/gson-2.2.4.jar"/>
-	<classpathentry kind="lib" path="C:/Users/edse4_000/Downloads/guava-15.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/edse4_000/Downloads/commons-math3-3.2-bin/commons-math3-3.2/commons-math3-3.2.jar"/>
-	<classpathentry kind="lib" path="C:/Users/edse4_000/Downloads/simmetrics_jar_v1_6_2_d07_02_07.jar"/>
+	<classpathentry kind="lib" path="/Users/justinedse/Desktop/jars/poi-ooxml-3.9-20121203.jar"/>
+	<classpathentry kind="lib" path="/Users/justinedse/Desktop/jars/poi-ooxml-schemas-3.9-20121203.jar"/>
+	<classpathentry kind="lib" path="/Users/justinedse/Desktop/jars/poi-scratchpad-3.9-20121203.jar"/>
+	<classpathentry kind="lib" path="/Users/justinedse/Desktop/jars/stax-api-1.0.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

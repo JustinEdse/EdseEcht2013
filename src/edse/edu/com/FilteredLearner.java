@@ -175,10 +175,10 @@ public class FilteredLearner
 
 		//loading the dataset and saving the model here.
 		learner = new FilteredLearner();
-		learner.loadDataset("C://Users//edse4_000//Desktop//usersnext.arff");
+		learner.loadDataset("//Users//justinedse//Desktop//usersnext.arff");
 		learner.evaluate();
 		learner.learn();
-		learner.saveModel("C://outgend.model");
+		learner.saveModel("//Users//justinedse//Desktop//outgend.model");
 	}
 
 }

@@ -65,7 +65,7 @@ public class Loader
 		 * name, their location, device, tweet text, and more.
 		 */
 		tweets = Loader
-				.loadTweetsFromFile("C://Users//edse4_000//Desktop//safe latest//shared_with_Justin_copy//Phone_and_Tablet_tweet.txt");
+				.loadTweetsFromFile("//Users//justinedse//Desktop//Games_tweet.txt");
 
 		/**
 		 * Assigning a list of users to the return value from the method

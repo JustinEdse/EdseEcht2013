@@ -21,7 +21,7 @@ import java.util.Map.Entry;
 
 import com.google.common.base.CharMatcher;
 import com.google.gson.Gson;
-import org.apache.commons.math3.*;
+
 
 
 public class TweetSentiment
@@ -225,12 +225,12 @@ public class TweetSentiment
 				if (which.equals("FEMALE"))
 				{
 					writer = new BufferedWriter(new FileWriter(
-							"C://outfemale.txt"));
+							"//Users//justinedse//Desktop//outfemale.txt"));
 					tempMap = wordFreqFemale;
 				} else if (which.equals("MALE"))
 				{
 					writer = new BufferedWriter(new FileWriter(
-							"C://outMale.txt"));
+							"//Users//justinedse//Desktop//outmale.txt"));
 					tempMap = wordFreqMale;
 
 				}
@@ -281,7 +281,7 @@ public class TweetSentiment
 		BufferedWriter out = null;
 		try
 		{
-			out = new BufferedWriter(new FileWriter("C://combinedGender.txt"));
+			out = new BufferedWriter(new FileWriter("//Users//justinedse//Desktop//combinedGender.txt"));
 		} catch (IOException e)
 		{
 			// TODO Auto-generated catch block

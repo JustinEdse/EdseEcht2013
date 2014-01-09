@@ -48,16 +48,17 @@ public class NameValidation
 	static BufferedReader readMale;
 	static BufferedReader readFemale;
 
-	// Common keywords that may be used in a twitter profile description that may potentially set
+	// Common keywords that may be used in a twitter profile description that
+	// may potentially set
 	// a woman and a man apart.
 	static String[] maleDesc = { " Boyfriend ", " boyfriend ", " Husband ",
-			" husband ", " Father ", " father ", " Son ", " son ", " Uncle ", " uncle ",
-			" Grandpa ", " grandpa ", " Grandfather ", " grandfather ", " Brother ",
-			" brother " };
+			" husband ", " Father ", " father ", " Son ", " son ", " Uncle ",
+			" uncle ", " Grandpa ", " grandpa ", " Grandfather ",
+			" grandfather ", " Brother ", " brother " };
 	static String[] femaleDesc = { " Girlfriend ", " girlfriend ", "Mother ",
-			" mother", " Wife ", " wife ", " Aunt ", " aunt ", " Mother ", " mother ",
-			" Sister", " sister ", " Grandmother ", " grandmother ", " grandma ",
-			" Grandma " };
+			" mother", " Wife ", " wife ", " Aunt ", " aunt ", " Mother ",
+			" mother ", " Sister", " sister ", " Grandmother ",
+			" grandmother ", " grandma ", " Grandma " };
 
 	/**
 	 * The first task method does is go through the movedUsers list and begins
@@ -103,7 +104,7 @@ public class NameValidation
 			gblMovedUsers = movedUsers;
 			int callsToDo = movedUsers.size();
 			int numToDo = (((callsToDo + 99) / 100) * 100) / 100;
-            System.out.println("NUM TO DO CORRECT " + numToDo);
+			System.out.println("NUM TO DO CORRECT " + numToDo);
 			int k = 0;
 			int keepTrackSizeOfUsers = 0;
 
@@ -111,24 +112,24 @@ public class NameValidation
 			{
 				System.out.println("in loop");
 				ResponseList<twitter4j.User> initialReturn = CallTwitterAPI(keepTrackSizeOfUsers);
-				
-				if(initialReturn != null){
-				returnUserInfoList.addAll(initialReturn);
+
+				if (initialReturn != null)
+				{
+					returnUserInfoList.addAll(initialReturn);
 				}
-				
-				
+
 				k++;
 				System.out.println("this is k " + k);
 				keepTrackSizeOfUsers += 100;
-				
-				if(keepTrackSizeOfUsers % 18000 == 0)
+
+				if (keepTrackSizeOfUsers % 18000 == 0)
 				{
 					try
 					{
-						Thread.sleep(840*1000);
-						
+						Thread.sleep(840 * 1000);
+
 					}
-					catch(InterruptedException e)
+					catch (InterruptedException e)
 					{
 						e.printStackTrace();
 					}
@@ -136,8 +137,8 @@ public class NameValidation
 
 			}
 
-			
-			List<twitter4j.User> finalFilteredList = NameValidation.filterCompanies(returnUserInfoList);
+			List<twitter4j.User> finalFilteredList = NameValidation
+					.filterCompanies(returnUserInfoList);
 			// Now I have each users real name registered from twitter in the
 			// returnUserInfoList. I can use this and the male/female file to
 			// start to get a gauge on whether this person might be male or
@@ -152,9 +153,9 @@ public class NameValidation
 				// a new user needs to be checked for male or female.
 				// If this is not done readMale and readFemale are NULL.
 				readMale = new BufferedReader(new FileReader(
-						"C://data//male//male.txt"));
+						"//Users//justinedse//Desktop//dist.male.first"));
 				readFemale = new BufferedReader(new FileReader(
-						"C://data//female//female.txt"));
+						"//Users//justinedse//Desktop//dist.female.first"));
 
 				String realName = tuser.getName();
 				String checkScreenName = tuser.getScreenName();
@@ -167,7 +168,8 @@ public class NameValidation
 				{
 					p++;
 					bothFiles.add(realName);
-				} else if (result == -2)
+				}
+				else if (result == -2)
 				{
 					c++;
 
@@ -193,7 +195,8 @@ public class NameValidation
 			// closing male and female buffers here.
 			readMale.close();
 			readFemale.close();
-		} catch (IOException ioe)
+		}
+		catch (IOException ioe)
 		{
 			ioe.printStackTrace();
 		}
@@ -228,8 +231,8 @@ public class NameValidation
 		boolean fMatch = false;
 		String realName = null;
 		String realScreenName = null;
-
-		
+		String[] maleCensusData = null;
+		String[] femaleCensusData = null;
 
 		// Using regex here to split the user's screen name at a capital letter
 		// and
@@ -247,7 +250,8 @@ public class NameValidation
 
 			String scArr[] = fixedSC.split(" ");
 			realScreenName = scArr[0];
-		} else
+		}
+		else
 		{
 			String realSCSplit = NameValidation.splitCamelCase(fixedSC);
 			String endSC[] = realSCSplit.split(" ");
@@ -258,7 +262,8 @@ public class NameValidation
 		{
 			String nameArr[] = fixedName.split(" ");
 			realName = nameArr[0];
-		} else
+		}
+		else
 		{
 			String realSplit = NameValidation.splitCamelCase(fixedName);
 			String endResult[] = realSplit.split(" ");
@@ -270,10 +275,13 @@ public class NameValidation
 			// reading in the text from the files...
 			while ((lineInMale = readMale.readLine()) != null)
 			{
-				String lowerM = lineInMale.toLowerCase();
-				if (realName.equalsIgnoreCase(lineInMale)
-						|| (realScreenName.toLowerCase()
-								.equalsIgnoreCase(lowerM)))
+				// maleCensusData[0] = name
+				// maleCensusData[1] = frequency of the name being used
+				maleCensusData = lineInMale.split("\t");
+
+				if (realName.toUpperCase().equals(maleCensusData[0])
+						|| (realScreenName.toUpperCase()
+								.equals(maleCensusData[0])))
 				{
 
 					mMatch = true;
@@ -286,9 +294,12 @@ public class NameValidation
 
 			while ((lineInFemale = readFemale.readLine()) != null)
 			{
-				String lower = lineInFemale.toLowerCase();
-				if (realName.equalsIgnoreCase(lineInFemale) || (realScreenName
-						.toLowerCase().equalsIgnoreCase(lower)))
+
+				femaleCensusData = lineInFemale.split("\t");
+
+				if (realName.toUpperCase().equals(femaleCensusData[0])
+						|| (realScreenName.toUpperCase()
+								.equals(femaleCensusData[0])))
 				{
 
 					fMatch = true;
@@ -304,43 +315,52 @@ public class NameValidation
 			{
 				result = 0;
 				System.out.println("FEMALE");
-			} else if (mMatch == true && fMatch == false)
+			}
+			else if (mMatch == true && fMatch == false)
 			{
 				result = 1;
 				System.out.println("MALE");
-			} else if (mMatch == true && fMatch == true)
+			}
+			else if (mMatch == true && fMatch == true)
 			{
-				// don't exactly know by name so also use the profile
-				// description.
-				if (stringContainsItemFromList(userDesc, maleDesc))
+
+				double femaleFreq = Double.parseDouble(femaleCensusData[1]);
+				double maleFreq = Double.parseDouble(maleCensusData[1]);
+				// CHECK FREQUENCY OF CENSUS DATA.
+
+				if (maleFreq > femaleFreq)
 				{
 					result = 1;
-				} else if (stringContainsItemFromList(userDesc, femaleDesc))
+				}
+				else if (maleFreq < femaleFreq)
 				{
 					result = 0;
-				} else
-				{
-					result = -1;
-					System.out.println("NAME MATCHED IN BOTH FILES");
 				}
 
-			} else if (mMatch == false && fMatch == false)
+			}
+			else if (mMatch == false && fMatch == false)
 			{
 
+				// IN THIS SCENARIO WE NEED TO RELY ON THE CLASSIFIER OBJECT
+				// FROM WEKA TO CLASSIFY
+				// THE INSTANCE.
 				if (stringContainsItemFromList(userDesc, maleDesc))
 				{
 					result = 1;
-				} else if (stringContainsItemFromList(userDesc, femaleDesc))
+				}
+				else if (stringContainsItemFromList(userDesc, femaleDesc))
 				{
 					result = 0;
-				} else
+				}
+				else
 				{
 					result = -2;
 					System.out.println("NO NAME MATCH IN EITHER FILE");
 				}
 			}
 
-		} catch (IOException ioe)
+		}
+		catch (IOException ioe)
 		{
 
 			ioe.printStackTrace();
@@ -400,13 +420,15 @@ public class NameValidation
 			// here.
 			tempList = twitter.lookupUsers(tempArr);
 			System.out.println("SIZE OF TEMP LIST GOT: " + tempList.size());
-		} catch (TwitterException e)
+		}
+		catch (TwitterException e)
 		{
 			// TODO Auto-generated catch block
 			if (e.getStatusCode() == 404)
 			{
 				System.out.println("Client error");
-			} else if (e.getStatusCode() == 503)
+			}
+			else if (e.getStatusCode() == 503)
 			{
 				System.out
 						.println("The Twitter Servers are up, but overloaded with requests. Try again later.");
@@ -457,34 +479,36 @@ public class NameValidation
 		}
 		return false;
 	}
-	
-	public static List<twitter4j.User> filterCompanies(List<twitter4j.User> users) throws IOException
+
+	public static List<twitter4j.User> filterCompanies(
+			List<twitter4j.User> users) throws IOException
 	{
-		//Go through the users list and check for usernames that belong to companies.
+		// Go through the users list and check for usernames that belong to
+		// companies.
 		Iterator<twitter4j.User> it = users.iterator();
 		BufferedReader reader = null;
 		String readLine = "";
-		while(it.hasNext())
-	    {
-			
-			reader = new BufferedReader(new FileReader("C://companies.txt"));
+		while (it.hasNext())
+		{
+
+			reader = new BufferedReader(new FileReader(
+					"//Users//justinedse//Desktop//companies.txt"));
 			twitter4j.User u = it.next();
-			
-		    while((readLine = reader.readLine()) != null)
-		    {
-				
-				if(u.getScreenName().equalsIgnoreCase(readLine))
+
+			while ((readLine = reader.readLine()) != null)
+			{
+
+				if (u.getScreenName().equalsIgnoreCase(readLine))
 				{
 					it.remove();
 					break;
 				}
 			}
-			
-		 }
+
+		}
 
 		reader.close();
 		return users;
 	}
-	
-	
+
 }
