@@ -153,28 +153,20 @@ public class NameValidation
 				// a new user needs to be checked for male or female.
 				// If this is not done readMale and readFemale are NULL.
 				readMale = new BufferedReader(new FileReader(
-						"//Users//justinedse//Desktop//dist.male.first"));
+						"//Users//justinedse//Desktop//maleCensus.txt"));
 				readFemale = new BufferedReader(new FileReader(
-						"//Users//justinedse//Desktop//dist.female.first"));
+						"//Users//justinedse//Desktop//femaleCensus.txt"));
 
 				String realName = tuser.getName();
 				String checkScreenName = tuser.getScreenName();
 				String userDesc = tuser.getDescription();
 				System.out.println(realName);
+				
 				int result = NameValidation.CheckGenderByFile(realName,
 						checkScreenName, userDesc);
 
-				if (result == -1)
-				{
-					p++;
-					bothFiles.add(realName);
-				}
-				else if (result == -2)
-				{
-					c++;
-
-				}
-				if (result == -1 || result == 1 || result == 0 || result == -2)
+				
+				if (result == 1 || result == 0 || result == -2)
 				{
 					MFMap.put(tuser, result);
 				}
@@ -237,8 +229,8 @@ public class NameValidation
 		// Using regex here to split the user's screen name at a capital letter
 		// and
 		// get their first name
-		String fixedName = initialName.trim().replaceAll("[^a-zA-Z]\\s", " ");
-		String fixedSC = screenName.trim().replaceAll("[^a-zA-Z]\\s", " ");
+		String fixedName = initialName.trim().replaceAll("[^a-zA-Z\u00D6\u00F6\u00DC\u00FC\u00C4\u00E4\u00DF]", " ");
+		String fixedSC = screenName.trim().replaceAll("[^a-zA-Z\u00D6\u00F6\u00DC\u00FC\u00C4\u00E4\u00DF]", " ");
 
 		// more regex cleanup, checking if screen name contains a change from
 		// lower case to upper case letters such as willBrown. If not then this
@@ -279,8 +271,8 @@ public class NameValidation
 				// maleCensusData[1] = frequency of the name being used
 				maleCensusData = lineInMale.split("\t");
 
-				if (realName.toUpperCase().equals(maleCensusData[0])
-						|| (realScreenName.toUpperCase()
+				if (realName.toLowerCase().equals(maleCensusData[0])
+						|| (realScreenName.toLowerCase()
 								.equals(maleCensusData[0])))
 				{
 
@@ -297,8 +289,8 @@ public class NameValidation
 
 				femaleCensusData = lineInFemale.split("\t");
 
-				if (realName.toUpperCase().equals(femaleCensusData[0])
-						|| (realScreenName.toUpperCase()
+				if (realName.toLowerCase().equals(femaleCensusData[0])
+						|| (realScreenName.toLowerCase()
 								.equals(femaleCensusData[0])))
 				{
 
@@ -344,6 +336,8 @@ public class NameValidation
 				// IN THIS SCENARIO WE NEED TO RELY ON THE CLASSIFIER OBJECT
 				// FROM WEKA TO CLASSIFY
 				// THE INSTANCE.
+				//FIX NEGATIVE ONE RETURN FROM ABOVE!!!!!!!!!!!!
+				/*
 				if (stringContainsItemFromList(userDesc, maleDesc))
 				{
 					result = 1;
@@ -357,6 +351,8 @@ public class NameValidation
 					result = -2;
 					System.out.println("NO NAME MATCH IN EITHER FILE");
 				}
+				*/
+				result = -2;
 			}
 
 		}
