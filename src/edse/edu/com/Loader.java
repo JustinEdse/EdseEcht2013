@@ -100,7 +100,7 @@ public class Loader
 		System.out.println(spamFilteredUsers.size() + "NEW SIZE ADJUSTED!");
 		NameValidation.check_name(spamFilteredUsers);
 
-		// MOVED USERS IS WHAT WE WANT TO CHECK REAL NAMES FOR.
+		////////////END OF PROGRAM////////////////////////////////
 		System.exit(0);
 
 	}

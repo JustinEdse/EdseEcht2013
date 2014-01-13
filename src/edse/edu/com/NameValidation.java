@@ -31,6 +31,11 @@ import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 
+import org.python.util.PythonInterpreter;
+import org.python.core.*;
+import org.apache.commons.*;
+import org.apache.commons.lang3.text.WordUtils;
+
 public class NameValidation
 {
 
@@ -47,6 +52,10 @@ public class NameValidation
 
 	static BufferedReader readMale;
 	static BufferedReader readFemale;
+
+	// declaring variables to communicate with Python script, remodeled after
+	// gender.c
+	static PythonInterpreter interp = new PythonInterpreter();
 
 	// Common keywords that may be used in a twitter profile description that
 	// may potentially set
@@ -80,6 +89,12 @@ public class NameValidation
 	 */
 	public static void check_name(List<User> movedUsers) throws IOException
 	{
+		interp.exec("import sys, os.path");
+		interp.exec("sys.path.append('//Users//justinedse//Desktop//')");
+		interp.exec("import sexmachine.detector as gender");
+
+		interp.exec("d = gender.Detector()");
+
 		// consumer key, consumer secret, access token, and access token secret.
 		// These are required in order
 		// to successfully use the Twitter4j API.
@@ -146,7 +161,7 @@ public class NameValidation
 
 			int c = 0;
 			int p = 0;
-			ArrayList<String> bothFiles = new ArrayList<>();
+
 			for (twitter4j.User tuser : finalFilteredList)
 			{
 				// Need to reopen or establish the filereader each time
@@ -161,11 +176,10 @@ public class NameValidation
 				String checkScreenName = tuser.getScreenName();
 				String userDesc = tuser.getDescription();
 				System.out.println(realName);
-				
-				int result = NameValidation.CheckGenderByFile(realName,
+
+				int result = NameValidation.CheckGender(realName,
 						checkScreenName, userDesc);
 
-				
 				if (result == 1 || result == 0 || result == -2)
 				{
 					MFMap.put(tuser, result);
@@ -212,13 +226,14 @@ public class NameValidation
 	 *             This is to catch any IO problems that may happen when reading
 	 *             the two names text files.
 	 */
-	public static int CheckGenderByFile(String initialName, String screenName,
+	public static int CheckGender(String initialName, String screenName,
 			String userDesc) throws IOException
 	{
 
 		// setup variables for assigning whether a match in a male or female
 		// file took place.
 		int result = 0;
+		int needsFileIO = 0;
 		boolean mMatch = false;
 		boolean fMatch = false;
 		String realName = null;
@@ -229,14 +244,17 @@ public class NameValidation
 		// Using regex here to split the user's screen name at a capital letter
 		// and
 		// get their first name
-		String fixedName = initialName.trim().replaceAll("[^a-zA-Z\u00D6\u00F6\u00DC\u00FC\u00C4\u00E4\u00DF]", " ");
-		String fixedSC = screenName.trim().replaceAll("[^a-zA-Z\u00D6\u00F6\u00DC\u00FC\u00C4\u00E4\u00DF]", " ");
+		String fixedName = initialName.trim().replaceAll(
+				"[\\*\\?\\!\\&\\%\\$\\#\\@\\(\\)]", " ");
+		String fixedSC = screenName.trim().replaceAll(
+				"[\\*\\?\\!\\&\\%\\$\\#\\@\\(\\)]", " ");
 
 		// more regex cleanup, checking if screen name contains a change from
 		// lower case to upper case letters such as willBrown. If not then this
 		// also
 		// checks if the screen name contains a space separating a first and
 		// last name.
+
 		if (fixedSC.contains(" "))
 		{
 
@@ -264,6 +282,37 @@ public class NameValidation
 
 		try
 		{
+			// AT THIS POINT THE NAME CHECKING PROCESS GOES THROUGH THE
+			// FOLLOWING PROCEDURES:
+			// 1. Send name and screen name to PythonCheck method and get a
+			// result of either M, F, or A.
+			// If M or F then result equals 1 or 0 accordingly. If A for
+			// androgynous/unsure then go to next step.
+			// 2. If A then scan the U.S census data files if there is a
+			// distinct match then issue a 1 or 0. Going
+			// through the file would probably be a good idea anyway to check a
+			// username or name with the Java startsWith() method.
+			// there is a match in both files then check the probabilities
+			// between the two names. Whichever file
+			// containing the name has the higher frequency wins out and the
+			// name is classified as such.
+			// 3. If the name does not appear in the file then that user is
+			// saved for future classification
+			// by the Weka built classifier.
+
+			String namePredict = NameValidation.PythonNameCheck(realName);
+			String scnamePredict = NameValidation
+					.PythonNameCheck(realScreenName);
+
+			if (namePredict.equals("M") || scnamePredict.equals("M"))
+			{
+				return 1;
+			}
+			else if (namePredict.equals("F") || scnamePredict.equals("F"))
+			{
+				return 0;
+			}
+
 			// reading in the text from the files...
 			while ((lineInMale = readMale.readLine()) != null)
 			{
@@ -271,9 +320,11 @@ public class NameValidation
 				// maleCensusData[1] = frequency of the name being used
 				maleCensusData = lineInMale.split("\t");
 
-				if (realName.toLowerCase().equals(maleCensusData[0])
-						|| (realScreenName.toLowerCase()
-								.equals(maleCensusData[0])))
+				if ((realName.toUpperCase().equals(maleCensusData[0]) || realName
+						.toUpperCase().startsWith(maleCensusData[0]))
+						|| (realScreenName.toUpperCase().equals(
+								maleCensusData[0]) || realScreenName
+								.toUpperCase().startsWith(maleCensusData[0])))
 				{
 
 					mMatch = true;
@@ -289,9 +340,11 @@ public class NameValidation
 
 				femaleCensusData = lineInFemale.split("\t");
 
-				if (realName.toLowerCase().equals(femaleCensusData[0])
-						|| (realScreenName.toLowerCase()
-								.equals(femaleCensusData[0])))
+				if ((realName.toUpperCase().equals(femaleCensusData[0]) || realName
+						.toUpperCase().startsWith(femaleCensusData[0]))
+						|| (realScreenName.toUpperCase().equals(
+								femaleCensusData[0]) || realScreenName
+								.toUpperCase().startsWith(femaleCensusData[0])))
 				{
 
 					fMatch = true;
@@ -306,19 +359,20 @@ public class NameValidation
 			if (fMatch == true && mMatch == false)
 			{
 				result = 0;
-				System.out.println("FEMALE");
+
 			}
 			else if (mMatch == true && fMatch == false)
 			{
 				result = 1;
-				System.out.println("MALE");
+
 			}
 			else if (mMatch == true && fMatch == true)
 			{
 
 				double femaleFreq = Double.parseDouble(femaleCensusData[1]);
 				double maleFreq = Double.parseDouble(maleCensusData[1]);
-				// CHECK FREQUENCY OF CENSUS DATA.
+
+				// CHECKING FREQUENCY OF CENSUS DATA.
 
 				if (maleFreq > femaleFreq)
 				{
@@ -333,26 +387,10 @@ public class NameValidation
 			else if (mMatch == false && fMatch == false)
 			{
 
-				// IN THIS SCENARIO WE NEED TO RELY ON THE CLASSIFIER OBJECT
-				// FROM WEKA TO CLASSIFY
-				// THE INSTANCE.
-				//FIX NEGATIVE ONE RETURN FROM ABOVE!!!!!!!!!!!!
-				/*
-				if (stringContainsItemFromList(userDesc, maleDesc))
-				{
-					result = 1;
-				}
-				else if (stringContainsItemFromList(userDesc, femaleDesc))
-				{
-					result = 0;
-				}
-				else
-				{
-					result = -2;
-					System.out.println("NO NAME MATCH IN EITHER FILE");
-				}
-				*/
+				// still unsure about these users. Let the classifier handle
+				// them.
 				result = -2;
+
 			}
 
 		}
@@ -384,8 +422,7 @@ public class NameValidation
 	{
 
 		// Needing to setup an array since the Twitter4j method lookUpUsers only
-		// takes
-		// an array type and not ArrayList.
+		// takes an array type and not ArrayList.
 
 		String[] tempArr = new String[100];
 		ResponseList<twitter4j.User> tempList = null;
@@ -505,6 +542,40 @@ public class NameValidation
 
 		reader.close();
 		return users;
+	}
+
+	public static String PythonNameCheck(String name)
+	{
+		// Using the Jython libray to communicate between the Java and Python
+		// languages. Interpreter was declared as static above in order to
+		// declare
+		// Detector() before this method. That way Detector() would not need to
+		// be called
+		// everytime this method is called. This saves time...
+
+		interp.exec("result = d.get_gender('" + WordUtils.capitalize(name)
+				+ "')");
+
+		// double gurding against a name being type like this:
+		PyObject gendAnswer = interp.get("result");
+		String convertedAns = gendAnswer.toString();
+		String result = null;
+
+		if (convertedAns.equals("male") || convertedAns.equals("mostly_male"))
+		{
+			result = "M";
+		}
+		else if (convertedAns.equals("female")
+				|| convertedAns.equals("mostly_female"))
+		{
+			result = "F";
+		}
+		else if (convertedAns.equals("andy"))
+		{
+			result = "A";
+		}
+
+		return result;
 	}
 
 }

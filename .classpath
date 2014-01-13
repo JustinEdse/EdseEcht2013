@@ -17,5 +17,8 @@
 	<classpathentry kind="lib" path="/Users/justinedse/Desktop/jars/poi-ooxml-schemas-3.9-20121203.jar"/>
 	<classpathentry kind="lib" path="/Users/justinedse/Desktop/jars/poi-scratchpad-3.9-20121203.jar"/>
 	<classpathentry kind="lib" path="/Users/justinedse/Desktop/jars/stax-api-1.0.1.jar"/>
+	<classpathentry kind="lib" path="/Users/justinedse/Downloads/jython-standalone-2.5.3.jar"/>
+	<classpathentry kind="lib" path="/Users/justinedse/Downloads/commons-lang3-3.2.1/commons-lang3-3.2.1.jar"/>
+	<classpathentry kind="lib" path="/Users/justinedse/Downloads/commons-lang3-3.2.1/commons-lang3-3.2.1-test-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
