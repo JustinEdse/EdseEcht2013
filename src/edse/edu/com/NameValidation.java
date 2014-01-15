@@ -546,17 +546,17 @@ public class NameValidation
 
 	public static String PythonNameCheck(String name)
 	{
-		// Using the Jython libray to communicate between the Java and Python
+		// Using the Jython library to communicate between the Java and Python
 		// languages. Interpreter was declared as static above in order to
 		// declare
 		// Detector() before this method. That way Detector() would not need to
 		// be called
-		// everytime this method is called. This saves time...
+		// every time this method is called. This saves time...
 
 		interp.exec("result = d.get_gender('" + WordUtils.capitalize(name)
 				+ "')");
 
-		// double gurding against a name being type like this:
+		// double guarding against a name being type like this:
 		PyObject gendAnswer = interp.get("result");
 		String convertedAns = gendAnswer.toString();
 		String result = null;
