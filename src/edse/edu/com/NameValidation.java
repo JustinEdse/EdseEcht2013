@@ -12,8 +12,10 @@
 package edse.edu.com;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,12 +48,19 @@ public class NameValidation
 	static Twitter twitter;
 
 	static List<User> gblMovedUsers = new ArrayList<User>();
+	static List<twitter4j.User> finalFilteredList = new ArrayList<twitter4j.User>();
 	static String lineInMale = "";
 	static String lineInFemale = "";
 	static String fullName = "";
 
 	static BufferedReader readMale;
 	static BufferedReader readFemale;
+	static BufferedReader companyReader;
+	
+	static String[] descriptionSpamSigns = {"sales","news","media","story","stories","coverage","buy","products","goods", "site", "website",
+		"rebates", "coupons", "$", "articles", "blog", "feedback","blog","net","com"};
+	
+	
 
 	// declaring variables to communicate with Python script, remodeled after
 	// gender.c
@@ -90,7 +99,7 @@ public class NameValidation
 	public static void check_name(List<User> movedUsers) throws IOException
 	{
 		interp.exec("import sys, os.path");
-		interp.exec("sys.path.append('//Users//justinedse//Desktop//')");
+		interp.exec("sys.path.append('/Users/justinedse/Desktop/')");
 		interp.exec("import sexmachine.detector as gender");
 
 		interp.exec("d = gender.Detector()");
@@ -103,7 +112,7 @@ public class NameValidation
 		cb.setOAuthConsumerSecret("m6RFWLgQx9CvHzmJteEX5F21s3iOdmO4pUqjiO4K5D4");
 		cb.setOAuthAccessToken("416099988-KC0pUGgQ9ATx85FkGywXQHrtdCUNlf9X3DCM91HW");
 		cb.setOAuthAccessTokenSecret("CUjqMeykmPjMz1UEjQx2wXZRqrKvwuAUfn9Lhh9qMlc");
-
+		cb.setUseSSL(true);
 		twitter = new TwitterFactory(cb.build()).getInstance();
 		ArrayList<twitter4j.User> returnUserInfoList = new ArrayList<twitter4j.User>();
 
@@ -152,25 +161,23 @@ public class NameValidation
 
 			}
 
-			List<twitter4j.User> finalFilteredList = NameValidation
+			finalFilteredList = NameValidation
 					.filterCompanies(returnUserInfoList);
 			// Now I have each users real name registered from twitter in the
 			// returnUserInfoList. I can use this and the male/female file to
 			// start to get a gauge on whether this person might be male or
 			// female.
-
-			int c = 0;
-			int p = 0;
-
+			System.out.println(finalFilteredList.size());
+			
 			for (twitter4j.User tuser : finalFilteredList)
 			{
 				// Need to reopen or establish the filereader each time
 				// a new user needs to be checked for male or female.
 				// If this is not done readMale and readFemale are NULL.
 				readMale = new BufferedReader(new FileReader(
-						"//Users//justinedse//Desktop//maleCensus.txt"));
+						"//Users//justinedse//Desktop//maleCensusSSA.txt"));
 				readFemale = new BufferedReader(new FileReader(
-						"//Users//justinedse//Desktop//femaleCensus.txt"));
+						"//Users//justinedse//Desktop//femaleCensusSSA.txt"));
 
 				String realName = tuser.getName();
 				String checkScreenName = tuser.getScreenName();
@@ -197,6 +204,8 @@ public class NameValidation
 			 * "INNAMEVALIDATION BEFOE CALL TO GENDERCLASSIFICATION!!! " +
 			 * MFMap.size() + "\t" + gblMovedUsers.size() + "\t\n " + q);
 			 */
+			NameValidation.printOutFilteredUsers(gblMovedUsers, finalFilteredList);
+			
 			GenderClassification.CheckGender(MFMap, gblMovedUsers);
 			// closing male and female buffers here.
 			readMale.close();
@@ -206,6 +215,7 @@ public class NameValidation
 		{
 			ioe.printStackTrace();
 		}
+		
 	}
 
 	/**
@@ -233,7 +243,6 @@ public class NameValidation
 		// setup variables for assigning whether a match in a male or female
 		// file took place.
 		int result = 0;
-		int needsFileIO = 0;
 		boolean mMatch = false;
 		boolean fMatch = false;
 		String realName = null;
@@ -244,42 +253,52 @@ public class NameValidation
 		// Using regex here to split the user's screen name at a capital letter
 		// and
 		// get their first name
+		
+		
 		String fixedName = initialName.trim().replaceAll(
-				"[\\*\\?\\!\\&\\%\\$\\#\\@\\(\\)]", " ");
+				"[^a-zA-Z]\\s", " ");
 		String fixedSC = screenName.trim().replaceAll(
-				"[\\*\\?\\!\\&\\%\\$\\#\\@\\(\\)]", " ");
+				"[^a-zA-Z]\\s", " ");
 
 		// more regex cleanup, checking if screen name contains a change from
 		// lower case to upper case letters such as willBrown. If not then this
 		// also
 		// checks if the screen name contains a space separating a first and
 		// last name.
-
+		
+		
 		if (fixedSC.contains(" "))
 		{
 
 			String scArr[] = fixedSC.split(" ");
 			realScreenName = scArr[0];
+			
 		}
 		else
 		{
 			String realSCSplit = NameValidation.splitCamelCase(fixedSC);
 			String endSC[] = realSCSplit.split(" ");
 			realScreenName = endSC[0];
+			
+			
 		}
 
 		if (fixedName.contains(" "))
 		{
+			
 			String nameArr[] = fixedName.split(" ");
 			realName = nameArr[0];
+			
 		}
 		else
 		{
 			String realSplit = NameValidation.splitCamelCase(fixedName);
 			String endResult[] = realSplit.split(" ");
 			realName = endResult[0];
+			
+		
+		
 		}
-
 		try
 		{
 			// AT THIS POINT THE NAME CHECKING PROCESS GOES THROUGH THE
@@ -466,6 +485,10 @@ public class NameValidation
 				System.out
 						.println("The Twitter Servers are up, but overloaded with requests. Try again later.");
 			}
+			else
+			{
+				e.printStackTrace();
+			}
 		}
 
 		Arrays.fill(tempArr, "");
@@ -505,7 +528,7 @@ public class NameValidation
 	{
 		for (int i = 0; i < items.length; i++)
 		{
-			if (inputString.contains(items[i]))
+			if (inputString.contains(items[i].toLowerCase()))
 			{
 				return true;
 			}
@@ -513,22 +536,26 @@ public class NameValidation
 		return false;
 	}
 
+	
 	public static List<twitter4j.User> filterCompanies(
 			List<twitter4j.User> users) throws IOException
 	{
 		// Go through the users list and check for usernames that belong to
 		// companies.
 		Iterator<twitter4j.User> it = users.iterator();
-		BufferedReader reader = null;
+		
 		String readLine = "";
+		companyReader = new BufferedReader(new FileReader(
+				"//Users//justinedse//Desktop//companies.txt"));
+		
+		
 		while (it.hasNext())
 		{
 
-			reader = new BufferedReader(new FileReader(
-					"//Users//justinedse//Desktop//companies.txt"));
+			
 			twitter4j.User u = it.next();
 
-			while ((readLine = reader.readLine()) != null)
+			while ((readLine = companyReader.readLine()) != null)
 			{
 
 				if (u.getScreenName().equalsIgnoreCase(readLine))
@@ -536,11 +563,24 @@ public class NameValidation
 					it.remove();
 					break;
 				}
+				
+			}
+			
+			if(NameValidation.stringContainsItemFromList(u.getDescription(), descriptionSpamSigns) ||
+					NameValidation.stringContainsItemFromList(u.getScreenName(), descriptionSpamSigns) ||
+					NameValidation.stringContainsItemFromList(u.getName(), descriptionSpamSigns))
+			{
+				it.remove();
 			}
 
 		}
+		
+		
+		
+		
 
-		reader.close();
+		
+		companyReader.close();
 		return users;
 	}
 
@@ -552,9 +592,10 @@ public class NameValidation
 		// Detector() before this method. That way Detector() would not need to
 		// be called
 		// every time this method is called. This saves time...
-
-		interp.exec("result = d.get_gender('" + WordUtils.capitalize(name)
-				+ "')");
+		String filtered = name.replaceAll("[^A-Za-z]", " ");
+		String betterFormat = filtered.trim();
+		interp.exec("result = d.get_gender('"+WordUtils.capitalize(betterFormat)
+				+"')");
 
 		// double guarding against a name being type like this:
 		PyObject gendAnswer = interp.get("result");
@@ -576,6 +617,36 @@ public class NameValidation
 		}
 
 		return result;
+	}
+	
+	public static void printOutFilteredUsers(List<edse.edu.com.User> globalUsers, List<twitter4j.User> filteredUsers)
+	{
+		try
+		{
+		BufferedWriter bw = new BufferedWriter(new FileWriter("//Users//justinedse//Documents//filteredUsers.txt"));
+		
+		for(edse.edu.com.User gblUser : globalUsers)
+		{
+			for(twitter4j.User twitter4JUser : filteredUsers)
+			{
+				if(gblUser.getUserName().equals(twitter4JUser.getScreenName()))
+				{
+					
+						bw.write(twitter4JUser.getId() + "," + gblUser.getUserName() + "," 
+					  + gblUser.getDescription() + "," + twitter4JUser.getDescription() + "\n");
+					
+				}
+ 			}
+		}
+		
+		bw.flush();
+		bw.close();
+		
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 }

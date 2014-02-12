@@ -45,6 +45,7 @@ import uk.ac.shef.wit.simmetrics.similaritymetrics.JaroWinkler;
 
 public class Loader
 {
+	
 
 	/**
 	 * @param args
@@ -65,7 +66,7 @@ public class Loader
 		 * name, their location, device, tweet text, and more.
 		 */
 		tweets = Loader
-				.loadTweetsFromFile("//Users//justinedse//Desktop//Games_tweet.txt");
+				.loadTweetsFromFile("//Users//justinedse//Desktop//Phone_and_Tablet_tweet.txt");
 
 		/**
 		 * Assigning a list of users to the return value from the method
@@ -272,6 +273,7 @@ public class Loader
 				}
 
 			}
+			
 			
 			count = 0;
 

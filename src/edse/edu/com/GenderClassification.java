@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+
 import twitter4j.User;
 
 public class GenderClassification
@@ -73,7 +74,7 @@ public class GenderClassification
 			} else if (mFVal == 0)
 			{
 				femaleList.add(userInMap);
-			} else if (mFVal == -1 || mFVal == -2)
+			} else if (mFVal == -2)
 			{
 
 				unknown.put(userInMap, mFVal);
@@ -237,6 +238,8 @@ public class GenderClassification
 		// printing their sizes out
 		System.out.println(fUsers.size());
 		System.out.println(mUsers.size());
+		
+		GenderClassification.printOutClassifiedUsers(mUsers, fUsers);
 
 		// Calling the tweet sentiment class to figure out the emotion behind
 		// male and
@@ -317,5 +320,68 @@ public class GenderClassification
 		 */
 		return convertedList;
 
+	}
+	
+	public static void printOutClassifiedUsers(Collection<edse.edu.com.User> mUsers, Collection<edse.edu.com.User> fUsers)
+	{
+		try
+		{
+		BufferedWriter buffWM = new BufferedWriter(new FileWriter("//Users//justinedse//Documents//classfdMales.txt"));
+		BufferedWriter buffWF = new BufferedWriter(new FileWriter("//Users//justinedse//Documents//classfdFemales.txt"));
+		
+		//for complete male profile, with UID.
+		for(twitter4j.User twitterU : NameValidation.finalFilteredList)
+		{
+			for(edse.edu.com.User mUser : mUsers)
+			{
+				if(mUser.getUserName().equals(twitterU.getScreenName()))
+				{
+					buffWM.write(twitterU.getId() + "," + mUser.getUserName() + "," + mUser.getRealName() + "," + mUser.getDescription() + "," + "M\n");
+				}
+			}
+		}
+		
+		
+		
+		//for complete female profile, with UID.
+		for(twitter4j.User twitterU : NameValidation.finalFilteredList)
+		{
+		   for(edse.edu.com.User fUser : fUsers)
+			{
+			  if(fUser.getUserName().equals(twitterU.getScreenName()))
+			  {
+				 buffWF.write(twitterU.getId() + "," + fUser.getUserName() + "," + fUser.getRealName() + "," + fUser.getDescription() + "," + "F\n");
+			  }
+			}
+		}
+		
+		
+		
+		
+		
+		
+		//for(edse.edu.com.User mUser : mUsers)
+		//{
+			
+			//buffWM.write(mUser.getUserName() + "," + mUser.getRealName() + "," + mUser.getDescription() + "," + "M\n");
+		//}
+		
+		//for(edse.edu.com.User fUser : fUsers)
+		//{
+			//buffWF.write(fUser.getUserName() + "," + fUser.getRealName() + "," + fUser.getDescription() + "," + "F\n");
+		//}
+		
+		buffWM.flush();
+		buffWF.flush();
+		buffWM.close();
+		buffWF.close();
+		
+	}
+		
+	catch(IOException ioe)
+	{
+		ioe.printStackTrace();
+	}
+    
 	}
 }

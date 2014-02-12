@@ -60,25 +60,7 @@ public class User
 	{
 		return this.tweets;
 	}
-	/*
-	public boolean hasMove()
-	{
-		Tweet tweet = this.tweets.get(0);
-		boolean moved = false;
 
-		for(Tweet secondTweet: this.tweets.subList(1, this.tweets.size())){
-			double dist = greatCircle(tweet.lat, tweet.lon, secondTweet.lat, secondTweet.lon);
-
-			if(dist > 0)
-			{
-				moved = true;
-				break;	
-			}	
-			tweet = secondTweet;
-		}
-		return moved;
-	}
-*/
 	
 	public static List<User> tweetsToUsers(List<Tweet> tweets)
 	{
